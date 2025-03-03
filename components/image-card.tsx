@@ -36,8 +36,8 @@ export function ImageCard({ image, onDelete }: ImageCardProps) {
     <Card
       ref={setNodeRef}
       style={style}
-      className={`group relative bg-gray-900/50 backdrop-blur-sm border-white/10 cursor-move 
-        hover:border-white/20 transition-all duration-200 will-change-transform
+      className={`group relative cursor-move border-white/10 bg-gray-900/50 backdrop-blur-sm 
+        transition-all duration-200 will-change-transform hover:border-white/20
         ${isDragging ? "shadow-2xl ring-2 ring-white/20" : "hover:shadow-xl"}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -49,7 +49,7 @@ export function ImageCard({ image, onDelete }: ImageCardProps) {
           <Image
             src={image.data || ""}
             alt="Gallery item"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 size-full object-cover"
             width={100}
             height={100}
           />
@@ -64,9 +64,9 @@ export function ImageCard({ image, onDelete }: ImageCardProps) {
             <Button
               variant="destructive"
               size="icon"
-              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 
-                transition-all duration-200 scale-90 group-hover:scale-100
-                bg-red-500/80 hover:bg-red-600/80"
+              className="absolute right-2 top-2 scale-90 bg-red-500/80 
+                opacity-0 transition-all duration-200 hover:bg-red-600/80
+                group-hover:scale-100 group-hover:opacity-100"
               onClick={(e) => {
                 e.stopPropagation()
                 onDelete(image.id)

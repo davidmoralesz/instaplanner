@@ -141,7 +141,7 @@ export function DropZone({ children, onDrop }: DropZoneProps) {
     >
       {isDragging && (
         <motion.div
-          className="absolute inset-0 bg-black/90 backdrop-blur-sm border-2 border-dashed border-white/20 z-50 flex items-center justify-center"
+          className="absolute inset-0 z-50 flex items-center justify-center border-2 border-dashed border-white/20 bg-black/90 backdrop-blur-sm"
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.98 }}
@@ -152,7 +152,7 @@ export function DropZone({ children, onDrop }: DropZoneProps) {
           }}
         >
           <motion.div
-            className="text-white/80 text-xl font-medium bg-white/10 px-6 py-4 rounded-lg backdrop-blur-sm"
+            className="rounded-lg bg-white/10 px-6 py-4 text-xl font-medium text-white/80 backdrop-blur-sm"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}

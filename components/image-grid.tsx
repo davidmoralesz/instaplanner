@@ -69,7 +69,7 @@ export function ImageGrid({
 
   if (isLoading) {
     return (
-      <div className="max-w-3xl mx-auto">
+      <div className="mx-auto max-w-3xl">
         <SkeletonGrid />
       </div>
     )
@@ -82,10 +82,10 @@ export function ImageGrid({
         isEmpty={true}
         onUpload={onUpload}
       >
-        <div ref={setDroppableRef} className="w-full h-[85vh]">
+        <div ref={setDroppableRef} className="h-[85vh] w-full">
           <div
-            className={`max-w-3xl size-full mx-auto border border-white/5 rounded-md
-                        transition-colors duration-150 flex items-center justify-center flex-col gap-3
+            className={`mx-auto flex size-full max-w-3xl flex-col items-center
+                        justify-center gap-3 rounded-md border border-white/5 transition-colors duration-150
                         ${isOver ? "bg-white/10" : "bg-white/5"}`}
           >
             <ImageUp className="size-5 text-white opacity-30" />
@@ -100,8 +100,8 @@ export function ImageGrid({
     <>
       <div ref={setDroppableRef} className="w-full">
         <div
-          className={`max-w-3xl mx-auto transition-all duration-300 rounded-lg
-            ${isOver ? "bg-white/10 ring-2 ring-white/20 scale-[0.99]" : "bg-white/5"}`}
+          className={`mx-auto max-w-3xl rounded-lg transition-all duration-300
+            ${isOver ? "scale-[0.99] bg-white/10 ring-2 ring-white/20" : "bg-white/5"}`}
         >
           <div className="grid grid-cols-3 gap-1">
             {images.map((image, index) => (
@@ -188,7 +188,7 @@ function GridItem({
       <motion.div
         ref={setNodeRef}
         style={style}
-        className={`group relative cursor-move bg-black overflow-hidden
+        className={`group relative cursor-move overflow-hidden bg-black
           ${isDragging ? "opacity-0" : "opacity-100"}`}
         {...attributes}
         {...listeners}
@@ -219,21 +219,21 @@ function GridItem({
           <Image
             src={image.data || "/placeholder.svg"}
             alt="Gallery item"
-            className={`absolute inset-0 w-full h-full object-cover transition-transform duration-200
+            className={`absolute inset-0 size-full object-cover transition-transform duration-200
               ${isOver ? "scale-95 opacity-50" : ""}`}
             draggable={false}
             fill={true}
           />
           <div
             className="absolute inset-0 bg-gradient-to-b from-black/60 
-                        to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                        to-transparent opacity-0 transition-opacity group-hover:opacity-100"
           >
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-2 right-2 scale-90 opacity-0 
-                            group-hover:opacity-100 group-hover:scale-100
-                            transition-all duration-200 text-white/70 hover:text-white"
+              className="absolute right-2 top-2 scale-90 text-white/70 
+                            opacity-0 transition-all
+                            duration-200 hover:text-white group-hover:scale-100 group-hover:opacity-100"
               onClick={(e) => {
                 e.stopPropagation()
                 onDelete(image.id)
@@ -246,9 +246,9 @@ function GridItem({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-2 left-2 scale-90 opacity-0 
-                                group-hover:opacity-100 group-hover:scale-100
-                                transition-all duration-200 text-white/70 hover:text-white"
+                className="absolute left-2 top-2 scale-90 text-white/70 
+                                opacity-0 transition-all
+                                duration-200 hover:text-white group-hover:scale-100 group-hover:opacity-100"
                 onClick={handleMoveToSidebar}
               >
                 <ArrowLeft className="size-4" />

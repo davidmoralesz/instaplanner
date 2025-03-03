@@ -59,7 +59,7 @@ export function InstructionsDialog({
           <span className="sr-only">Show Instructions</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-xl bg-black border-white/10 overflow-y-auto max-h-screen my-1">
+      <DialogContent className="my-1 max-h-screen overflow-y-auto border-white/10 bg-black sm:max-w-xl">
         <DialogHeader className="space-y-4">
           <DialogTitle className="text-xl text-white">
             Welcome to InstaPlanner
@@ -101,63 +101,63 @@ export function InstructionsDialog({
             <div className="grid gap-4 text-sm">
               <div className="grid grid-cols-2 items-center gap-y-3">
                 <div className="flex items-center gap-1">
-                  <div className="bg-white/10 p-1 rounded-md">
+                  <div className="rounded-md bg-white/10 p-1">
                     <Command className="size-4 text-white/70" />
                   </div>
                   <span className="text-white/70">+</span>
-                  <kbd className="text-xs bg-white/10 px-2 py-1 rounded-md text-white/70 w-fit">
+                  <kbd className="w-fit rounded-md bg-white/10 px-2 py-1 text-xs text-white/70">
                     Shift
                   </kbd>
                   <span className="text-white/70">+</span>
-                  <kbd className="text-xs bg-white/10 px-2 py-1 rounded-md text-white/70 w-fit">
+                  <kbd className="w-fit rounded-md bg-white/10 px-2 py-1 text-xs text-white/70">
                     Z
                   </kbd>
                   <span className="text-white/70">Redo</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <kbd className="text-xs bg-white/10 px-2 py-1 rounded-md text-white/70 w-fit">
+                  <kbd className="w-fit rounded-md bg-white/10 px-2 py-1 text-xs text-white/70">
                     delete
                   </kbd>
                   <span className="text-white/70">Delete hovered image</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="bg-white/10 p-1 rounded-md">
+                  <div className="rounded-md bg-white/10 p-1">
                     <Command className="size-4 text-white/70" />
                   </div>
                   <span className="text-white/70">+</span>
-                  <kbd className="text-xs bg-white/10 px-2 py-1 rounded-md text-white/70 w-fit">
+                  <kbd className="w-fit rounded-md bg-white/10 px-2 py-1 text-xs text-white/70">
                     Z
                   </kbd>
                   <span className="text-white/70">Undo</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="bg-white/10 p-1 rounded-md">
+                  <div className="rounded-md bg-white/10 p-1">
                     <ArrowRight className="size-4 text-white/70" />
                   </div>
                   <span className="text-white/70">Move to grid</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="bg-white/10 p-1 rounded-md">
+                  <div className="rounded-md bg-white/10 p-1">
                     <Command className="size-4 text-white/70" />
                   </div>
                   <span className="text-white/70">+</span>
-                  <div className="bg-white/10 p-1 rounded-md">
+                  <div className="rounded-md bg-white/10 p-1">
                     <ArrowRight className="size-4 text-white/70" />
                   </div>
                   <span className="text-white/70">Move all to grid</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="bg-white/10 p-1 rounded-md">
+                  <div className="rounded-md bg-white/10 p-1">
                     <ArrowLeft className="size-4 text-white/70" />
                   </div>
                   <span className="text-white/70">Move to sidebar</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="bg-white/10 p-1 rounded-md">
+                  <div className="rounded-md bg-white/10 p-1">
                     <Command className="size-4 text-white/70" />
                   </div>
                   <span className="text-white/70">+</span>
-                  <div className="bg-white/10 p-1 rounded-md">
+                  <div className="rounded-md bg-white/10 p-1">
                     <ArrowLeft className="size-4 text-white/70" />
                   </div>
                   <span className="text-white/70">Move all to sidebar</span>
@@ -178,7 +178,7 @@ export function InstructionsDialog({
               </li>
               <li className="transition-colors hover:text-white/90">
                 • Click this help icon
-                <HelpCircle className="size-4 inline-block mx-1" />
+                <HelpCircle className="mx-1 inline-block size-4" />
                 anytime to see these instructions again
               </li>
             </ul>

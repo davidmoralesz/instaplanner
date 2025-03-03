@@ -23,7 +23,7 @@ export function GhostPlaceholder({
         damping: 20,
         stiffness: 300,
       }}
-      className={`absolute inset-0 pointer-events-none ${className}`}
+      className={`pointer-events-none absolute inset-0 ${className}`}
     >
       <div className="absolute inset-0 bg-white/5" />
       <div className="absolute inset-0 border border-white/5" />

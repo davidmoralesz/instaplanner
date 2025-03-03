@@ -118,32 +118,32 @@ export function Lightbox({
       className="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg"
     >
       {/* Controls */}
-      <div className="absolute top-4 right-4 flex items-center gap-2 z-50">
+      <div className="absolute right-4 top-4 z-50 flex items-center gap-2">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => handleZoom(0.5)}
           disabled={scale >= 3}
-          className="text-white/70 hover:text-white hover:bg-white/10"
+          className="text-white/70 hover:bg-white/10 hover:text-white"
         >
-          <ZoomIn className="h-4 w-4" />
+          <ZoomIn className="size-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
           onClick={() => handleZoom(-0.5)}
           disabled={scale <= 0.5}
-          className="text-white/70 hover:text-white hover:bg-white/10"
+          className="text-white/70 hover:bg-white/10 hover:text-white"
         >
-          <ZoomOut className="h-4 w-4" />
+          <ZoomOut className="size-4" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
           onClick={onClose}
-          className="text-white/70 hover:text-white hover:bg-white/10"
+          className="text-white/70 hover:bg-white/10 hover:text-white"
         >
-          <X className="h-4 w-4" />
+          <X className="size-4" />
         </Button>
       </div>
 
@@ -154,23 +154,23 @@ export function Lightbox({
             variant="ghost"
             size="icon"
             onClick={handlePrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:bg-white/10 hover:text-white"
           >
-            <ChevronLeft className="h-6 w-6" />
+            <ChevronLeft className="size-6" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:bg-white/10 hover:text-white"
           >
-            <ChevronRight className="h-6 w-6" />
+            <ChevronRight className="size-6" />
           </Button>
         </>
       )}
 
       {/* Image container */}
-      <div className="h-full w-full flex flex-col items-center gap-6 justify-center">
+      <div className="flex size-full flex-col items-center justify-center gap-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -195,7 +195,7 @@ export function Lightbox({
             <motion.img
               src={images[currentIndex].data}
               alt={`Image ${currentIndex + 1}`}
-              className="max-h-[80vh] max-w-[90vw] object-contain select-none"
+              className="max-h-[80vh] max-w-[90vw] select-none object-contain"
               style={{
                 transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
                 transition: isDragging ? "none" : "transform 0.2s ease-out",
@@ -205,7 +205,7 @@ export function Lightbox({
           </motion.div>
         </AnimatePresence>
         {/* Image counter */}
-        <div className="text-white/70 text-sm">
+        <div className="text-sm text-white/70">
           {currentIndex + 1} / {images.length}
         </div>
       </div>

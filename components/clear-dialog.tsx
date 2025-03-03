@@ -31,7 +31,7 @@ export function ClearDialog({
 }: ClearDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-black border-white/10 text-white">
+      <DialogContent className="border-white/10 bg-black text-white sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Clear Images</DialogTitle>
           <DialogDescription className="text-white/70">

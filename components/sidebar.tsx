@@ -57,8 +57,8 @@ export function Sidebar({
   return (
     <div
       ref={setNodeRef}
-      className={`flex-1 h-full overflow-y-auto p-3 transition-all duration-300
-        ${isOver ? "bg-white/10 scale-[0.99]" : "bg-black"}`}
+      className={`h-full flex-1 overflow-y-auto p-3 transition-all duration-300
+        ${isOver ? "scale-[0.99] bg-white/10" : "bg-black"}`}
     >
       {images.length === 0 ? (
         <ImageContextMenu
@@ -66,7 +66,7 @@ export function Sidebar({
           isEmpty={true}
           onUpload={onUpload}
         >
-          <div className="flex items-center justify-center flex-col h-full rounded-md border border-white/5 bg-white/5 gap-3">
+          <div className="flex h-full flex-col items-center justify-center gap-3 rounded-md border border-white/5 bg-white/5">
             <ImageUp className="size-5 text-white opacity-30" />
             <p className="text-white/30">Drop images here</p>
           </div>
@@ -150,7 +150,7 @@ function SidebarItem({
       <motion.div
         ref={setNodeRef}
         style={style}
-        className={`group relative bg-black overflow-hidden cursor-move transition-all
+        className={`group relative cursor-move overflow-hidden bg-black transition-all
           duration-200 ${isDragging ? "opacity-0" : ""}`}
         {...attributes}
         {...listeners}
@@ -182,30 +182,30 @@ function SidebarItem({
           />
           <div
             className="absolute inset-0 bg-gradient-to-b from-black/60
-                        to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                        to-transparent opacity-0 transition-opacity group-hover:opacity-100"
           >
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-1 right-1 scale-75 opacity-0 group-hover:opacity-100
-                            group-hover:scale-100 transition-all duration-200 text-white/70 hover:text-white"
+              className="absolute right-1 top-1 scale-75 text-white/70 opacity-0
+                            transition-all duration-200 hover:text-white group-hover:scale-100 group-hover:opacity-100"
               onClick={(e) => {
                 e.stopPropagation()
                 onDelete(image.id)
               }}
             >
-              <Trash className="w-3 h-3" />
+              <Trash className="size-3" />
               <span className="sr-only">Delete</span>
             </Button>
             {onMoveToGrid && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-1 left-1 scale-75 opacity-0 group-hover:opacity-100
-                                group-hover:scale-100 transition-all duration-200 text-white/70 hover:text-white"
+                className="absolute left-1 top-1 scale-75 text-white/70 opacity-0
+                                transition-all duration-200 hover:text-white group-hover:scale-100 group-hover:opacity-100"
                 onClick={handleMoveToGrid}
               >
-                <ArrowRight className="w-3 h-3" />
+                <ArrowRight className="size-3" />
                 <span className="sr-only">Move to Grid</span>
               </Button>
             )}

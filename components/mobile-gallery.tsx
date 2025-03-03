@@ -33,17 +33,17 @@ export function MobileGallery({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="bottom"
-        className="h-[85vh] p-0 bg-black border-t border-white/10 rounded-t-xl"
+        className="h-[85vh] rounded-t-xl border-t border-white/10 bg-black p-0"
         closeClassName="absolute right-4 top-4 text-white/50 hover:text-white"
       >
-        <div className="flex flex-col h-full">
+        <div className="flex h-full flex-col">
           {/* Handle bar for dragging */}
-          <div className="pt-3 pb-2 flex justify-center">
-            <div className="w-12 h-1 rounded-full bg-white/20" />
+          <div className="flex justify-center pb-2 pt-3">
+            <div className="h-1 w-12 rounded-full bg-white/20" />
           </div>
 
           {/* Header */}
-          <div className="px-4 py-2 border-b border-white/10 flex items-center justify-between">
+          <div className="flex items-center justify-between border-b border-white/10 px-4 py-2">
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-medium text-white">New Images</h2>
               <span className="text-sm text-white/50">{images.length}</span>
@@ -100,10 +100,10 @@ export function MobileGallery({
           </div>
 
           {/* Close button at bottom */}
-          <div className="p-4 border-t border-white/10">
+          <div className="border-t border-white/10 p-4">
             <Button
               variant="ghost"
-              className="w-full text-white/50 hover:text-white flex items-center justify-center gap-2"
+              className="flex w-full items-center justify-center gap-2 text-white/50 hover:text-white"
               onClick={() => onOpenChange(false)}
             >
               Close

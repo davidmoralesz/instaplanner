@@ -20,15 +20,13 @@ export function GlobalContextMenu({
 }: GlobalContextMenuProps) {
   return (
     <ContextMenu>
-      <ContextMenuTrigger className="w-full h-full">
-        {children}
-      </ContextMenuTrigger>
-      <ContextMenuContent className="bg-zinc-900 border-zinc-800 text-white">
+      <ContextMenuTrigger className="size-full">{children}</ContextMenuTrigger>
+      <ContextMenuContent className="border-zinc-800 bg-zinc-900 text-white">
         <ContextMenuItem
           onClick={onShowInstructions}
-          className="flex items-center gap-2 cursor-pointer focus:bg-zinc-800 focus:text-white hover:bg-zinc-800"
+          className="flex cursor-pointer items-center gap-2 hover:bg-zinc-800 focus:bg-zinc-800 focus:text-white"
         >
-          <HelpCircle className="w-4 h-4" />
+          <HelpCircle className="size-4" />
           <span>Show Instructions</span>
         </ContextMenuItem>
       </ContextMenuContent>

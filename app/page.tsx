@@ -131,10 +131,10 @@ export default function GalleryPage() {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="min-h-screen bg-black text-white flex flex-col md:flex-row">
+          <div className="flex min-h-screen flex-col bg-black text-white md:flex-row">
             {/* Desktop Sidebar - Hidden on mobile */}
-            <div className="hidden md:flex fixed top-0 left-0 w-80 h-screen border-r border-white/10 overflow-hidden flex-col bg-black z-10">
-              <div className="p-4 border-b border-white/10 flex items-center justify-between">
+            <div className="fixed left-0 top-0 z-10 hidden h-screen w-80 flex-col overflow-hidden border-r border-white/10 bg-black md:flex">
+              <div className="flex items-center justify-between border-b border-white/10 p-4">
                 <div className="flex items-center gap-4">
                   <h1 className="text-lg font-medium">InstaPlanner</h1>
                   <div className="h-4 w-px bg-white/10" />
@@ -196,8 +196,8 @@ export default function GalleryPage() {
             </div>
 
             {/* Mobile Header - Visible only on mobile */}
-            <div className="md:hidden sticky top-0 z-20 bg-black/80 backdrop-blur-sm border-b border-white/10">
-              <div className="px-4 h-16 flex items-center justify-between">
+            <div className="sticky top-0 z-20 border-b border-white/10 bg-black/80 backdrop-blur-sm md:hidden">
+              <div className="flex h-16 items-center justify-between px-4">
                 <h1 className="text-lg font-medium">InstaPlanner</h1>
                 <div className="flex items-center gap-2">
                   <ImageUploader onUpload={addImages} ref={imageUploaderRef} />
@@ -229,8 +229,8 @@ export default function GalleryPage() {
             >
               <div className="flex-1 overflow-auto md:ml-80">
                 <div className="w-full p-4 md:p-6">
-                  <div className="max-w-3xl mx-auto flex justify-between items-center mb-6">
-                    <h2 className="text-lg font-medium mr-2">Grid</h2>
+                  <div className="mx-auto mb-6 flex max-w-3xl items-center justify-between">
+                    <h2 className="mr-2 text-lg font-medium">Grid</h2>
                     <InstructionsDialog
                       className="mr-auto"
                       open={instructionsOpen}
@@ -240,7 +240,7 @@ export default function GalleryPage() {
                       variant="ghost"
                       size="sm"
                       onClick={moveAllToSidebar}
-                      className="text-white/70 hover:text-white flex items-center gap-1"
+                      className="flex items-center gap-1 text-white/70 hover:text-white"
                       disabled={gridImages.length === 0}
                     >
                       <ArrowLeft className="size-5" />
@@ -292,7 +292,7 @@ export default function GalleryPage() {
               {activeImage ? (
                 <motion.div
                   {...dragOverlayAnimation}
-                  className="w-full aspect-[4/5] overflow-hidden relative"
+                  className="relative aspect-[4/5] w-full overflow-hidden"
                   style={{
                     transformOrigin: "0 0",
                     filter: "drop-shadow(0 25px 25px rgb(0 0 0 / 0.15))",
@@ -302,7 +302,7 @@ export default function GalleryPage() {
                   <Image
                     src={activeImage.data || ""}
                     alt="Dragging"
-                    className="w-full h-full object-cover"
+                    className="size-full object-cover"
                     fill={true}
                     priority
                   />
