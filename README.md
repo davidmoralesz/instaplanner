@@ -2,7 +2,7 @@
 
 InstaPlanner is a modern, responsive web application for organizing and planning Instagram posts. It provides an intuitive drag-and-drop interface, keyboard shortcuts, and a flexible layout system for efficient content management.
 
-![InstaPlanner Screenshot](public/screenshot.png)
+![InstaPlanner Screenshot](public/instaplanner_screenshot-min.png)
 
 ## Features
 
@@ -40,7 +40,7 @@ InstaPlanner is a modern, responsive web application for organizing and planning
 
 1. Clone the repository:
 
-````bash
+```bash
 git clone https://github.com/yourusername/instaplanner.git
 cd instaplanner
-````
+```
