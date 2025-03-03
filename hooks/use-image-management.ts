@@ -345,7 +345,7 @@ export function useImageManagement() {
         handleError(error)
       }
     },
-    [handleError, toast]
+    [handleError]
   )
 
   const updateGridImages = useCallback(

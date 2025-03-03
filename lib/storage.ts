@@ -122,7 +122,9 @@ export async function loadImages() {
  * @param container The container the images are in (grid or sidebar)
  */
 export async function updatePositions(
-  images: ImageItem[], _container: "grid" | "sidebar") {
+  images: ImageItem[],
+  _container: "grid" | "sidebar"
+) {
   try {
     const db = await initDB()
     const tx = db.transaction(STORE_NAME, "readwrite")
