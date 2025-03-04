@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server"
-import type { LogEntry } from "@/lib/logger"
+
+export const runtime = "edge"
 
 export async function POST(request: Request) {
   try {
-    const logEntry: LogEntry = await request.json()
+    const logEntry = await request.json()
 
     // Here you would typically:
     // 1. Validate the log entry
