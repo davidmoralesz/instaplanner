@@ -22,6 +22,7 @@ import { DropZone } from "@/components/drop-zone"
 import { ClearDialog } from "@/components/clear-dialog"
 import { InstructionsDialog } from "@/components/instructions-dialog"
 import { GlobalContextMenu } from "@/components/global-context-menu"
+import { MobileMaintenanceDialog } from "@/components/mobile-maintenance-dialog"
 import { useDragAndDrop } from "@/hooks/use-drag-and-drop"
 import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation"
 import { usePageHandlers } from "@/hooks/use-page-handlers"
@@ -120,6 +121,8 @@ export default function GalleryPage() {
 
   return (
     <div className="min-h-screen bg-black">
+      <MobileMaintenanceDialog />
+
       <DropZone onDrop={addImages}>
         <DndContext
           sensors={sensors}
