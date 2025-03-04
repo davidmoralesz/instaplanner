@@ -15,6 +15,7 @@
     "test:watch": "vitest --watch",
     "test:watch:ui": "vitest --watch --ui",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
     "test": "vitest",
