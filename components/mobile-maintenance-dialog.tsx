@@ -1,6 +1,5 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -13,27 +12,7 @@ import { AlertTriangle } from "lucide-react"
 
 export function MobileMaintenanceDialog() {
   const { isMobile, isReady } = useMobileDetection()
-
-  const [maintenanceMode, setMaintenanceMode] = useState(false)
-
-  useEffect(() => {
-    async function fetchMaintenanceMode() {
-      try {
-        const res = await fetch("/api/maintenance")
-        if (res.ok) {
-          const data = await res.json()
-          setMaintenanceMode(data.maintenanceMode)
-        } else {
-          console.error("Failed to fetch maintenance mode flag")
-        }
-      } catch (err) {
-        console.error("Error fetching maintenance mode:", err)
-      }
-    }
-
-    fetchMaintenanceMode()
-  }, [])
-
+  const maintenanceMode = true
   const showDialog = isReady && isMobile && maintenanceMode
 
   if (!showDialog) return null
@@ -46,12 +25,12 @@ export function MobileMaintenanceDialog() {
         onEscapeKeyDown={(e) => e.preventDefault()}
         closable={false}
       >
-        <DialogHeader className="flex flex-col items-center gap-2 text-white/70">
+        <DialogHeader className="flex flex-col items-center gap-2 text-white/70 text-balance text-center">
           <AlertTriangle className="size-6" />
           <DialogTitle className="text-xl text-white">
             Mobile Experience Under Maintenance
           </DialogTitle>
-          <DialogDescription className="text-balance text-center">
+          <DialogDescription>
             We&apos;re currently improving the mobile experience of
             InstaPlanner. Some features may not work as expected on mobile
             devices. For the best experience, please use a desktop browser.
