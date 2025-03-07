@@ -9,10 +9,10 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import {
-  Trash2 as Trash,
-  ArrowRight,
   ArrowLeft,
+  ArrowRight,
   Shuffle,
+  Trash2 as Trash,
   Upload,
 } from "lucide-react"
 

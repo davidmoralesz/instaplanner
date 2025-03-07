@@ -1,32 +1,32 @@
 "use client"
 
-import Image from "next/image"
-import { useEffect } from "react"
+import { ClearDialog } from "@/components/clear-dialog"
+import { DropZone } from "@/components/drop-zone"
+import { GlobalContextMenu } from "@/components/global-context-menu"
+import { ImageGrid } from "@/components/image-grid"
+import { ImageUploader } from "@/components/image-uploader"
+import { InstructionsDialog } from "@/components/instructions-dialog"
+import { MobileGallery } from "@/components/mobile-gallery"
+import { MobileMaintenanceDialog } from "@/components/mobile-maintenance-dialog"
+import { Sidebar } from "@/components/sidebar"
+import { Button } from "@/components/ui/button"
+import { useDragAndDrop } from "@/hooks/use-drag-and-drop"
+import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation"
+import { usePageHandlers } from "@/hooks/use-page-handlers"
 import {
   DndContext,
   DragOverlay,
+  PointerSensor,
   pointerWithin,
   rectIntersection,
-  PointerSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core"
 import { SortableContext } from "@dnd-kit/sortable"
-import { motion, AnimatePresence } from "framer-motion"
-import { ImageUploader } from "@/components/image-uploader"
-import { ImageGrid } from "@/components/image-grid"
-import { Sidebar } from "@/components/sidebar"
-import { MobileGallery } from "@/components/mobile-gallery"
-import { Button } from "@/components/ui/button"
-import { Trash, Menu, ArrowRight, ArrowLeft, Shuffle } from "lucide-react"
-import { DropZone } from "@/components/drop-zone"
-import { ClearDialog } from "@/components/clear-dialog"
-import { InstructionsDialog } from "@/components/instructions-dialog"
-import { GlobalContextMenu } from "@/components/global-context-menu"
-import { MobileMaintenanceDialog } from "@/components/mobile-maintenance-dialog"
-import { useDragAndDrop } from "@/hooks/use-drag-and-drop"
-import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation"
-import { usePageHandlers } from "@/hooks/use-page-handlers"
+import { AnimatePresence, motion } from "framer-motion"
+import { ArrowLeft, ArrowRight, Menu, Shuffle, Trash } from "lucide-react"
+import Image from "next/image"
+import { useEffect } from "react"
 
 export default function GalleryPage() {
   const {

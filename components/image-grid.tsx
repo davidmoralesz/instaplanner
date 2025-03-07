@@ -1,21 +1,21 @@
 "use client"
 
-import type React from "react"
 import type { ImageItem } from "@/types"
+import type React from "react"
 
-import Image from "next/image"
-import { useState } from "react"
+import { GhostPlaceholder } from "@/components/ghost-placeholder"
+import { Lightbox } from "@/components/lightbox"
+import { ImageContextMenu } from "@/components/shared/image-context-menu"
+import { SkeletonGrid } from "@/components/skeleton-grid"
+import { Button } from "@/components/ui/button"
+import { useSwapAnimation } from "@/hooks/use-swap-animation"
 import { useDroppable } from "@dnd-kit/core"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { Trash, ImageUp, ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { ImageContextMenu } from "@/components/shared/image-context-menu"
-import { SkeletonGrid } from "@/components/skeleton-grid"
-import { Lightbox } from "@/components/lightbox"
-import { GhostPlaceholder } from "@/components/ghost-placeholder"
-import { useSwapAnimation } from "@/hooks/use-swap-animation"
+import { ArrowLeft, ImageUp, Trash } from "lucide-react"
+import Image from "next/image"
+import { useState } from "react"
 
 interface ImageGridProps {
   images: ImageItem[]

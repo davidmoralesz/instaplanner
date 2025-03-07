@@ -1,18 +1,18 @@
 "use client"
 
-import type React from "react"
 import type { ImageItem } from "@/types"
+import type React from "react"
 
-import Image from "next/image"
+import { GhostPlaceholder } from "@/components/ghost-placeholder"
+import { ImageContextMenu } from "@/components/shared/image-context-menu"
+import { Button } from "@/components/ui/button"
+import { useSwapAnimation } from "@/hooks/use-swap-animation"
 import { useDroppable } from "@dnd-kit/core"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { Trash, ArrowRight, ImageUp } from "lucide-react"
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { ImageContextMenu } from "@/components/shared/image-context-menu"
-import { GhostPlaceholder } from "@/components/ghost-placeholder"
-import { useSwapAnimation } from "@/hooks/use-swap-animation"
+import { ArrowRight, ImageUp, Trash } from "lucide-react"
+import Image from "next/image"
 
 interface SidebarProps {
   images: ImageItem[]

@@ -1,12 +1,12 @@
 "use client"
 
+import { Sidebar } from "@/components/sidebar"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
 import type { ImageItem } from "@/types"
 import { SortableContext } from "@dnd-kit/sortable"
-import { Sheet, SheetContent } from "@/components/ui/sheet"
-import { Button } from "@/components/ui/button"
-import { Trash2, MoveRight, Shuffle, ChevronDown } from "lucide-react"
-import { Sidebar } from "@/components/sidebar"
 import { AnimatePresence } from "framer-motion"
+import { ChevronDown, MoveRight, Shuffle, Trash2 } from "lucide-react"
 
 interface MobileGalleryProps {
   open: boolean

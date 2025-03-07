@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -9,17 +9,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import {
-  HelpCircle,
   ArrowLeft,
   ArrowRight,
   Command,
-  Upload,
+  Grip,
+  HelpCircle,
   Shuffle,
   Trash2 as Trash,
-  Grip,
+  Upload,
 } from "lucide-react"
+import { useEffect, useState } from "react"
 
 const INSTRUCTIONS_KEY = "gallery-instructions-shown"
 

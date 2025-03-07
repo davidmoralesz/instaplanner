@@ -1,6 +1,5 @@
 "use client"
 
-import type React from "react"
 import {
   ContextMenu,
   ContextMenuContent,
@@ -8,6 +7,7 @@ import {
   ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { HelpCircle } from "lucide-react"
+import type React from "react"
 
 interface GlobalContextMenuProps {
   children: React.ReactNode

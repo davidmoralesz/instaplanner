@@ -2,11 +2,11 @@
 
 import type React from "react"
 
-import { useEffect, useState, useCallback } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { X, ZoomIn, ZoomOut, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { ImageItem } from "@/types"
+import { AnimatePresence, motion } from "framer-motion"
+import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from "lucide-react"
+import { useCallback, useEffect, useState } from "react"
 
 interface LightboxProps {
   images: ImageItem[]

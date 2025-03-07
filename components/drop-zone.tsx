@@ -1,11 +1,11 @@
 "use client"
 
-import type React from "react"
-import type { ImageItem } from "@/types"
-import { useState, useCallback, useRef } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { AppError, ErrorCodes } from "@/lib/errors"
+import type { ImageItem } from "@/types"
 import { motion } from "framer-motion"
+import type React from "react"
+import { useCallback, useRef, useState } from "react"
 
 interface DropZoneProps {
   children: React.ReactNode

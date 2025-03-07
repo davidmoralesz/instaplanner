@@ -5,3 +5,5 @@ build
 .contentlayer
 apps/www/pages/api/registry.json
 **/fixtures
+wrangler.jsonc
+components/ui

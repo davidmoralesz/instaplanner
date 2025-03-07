@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function swapArrayElements<T>(array: T[], i: number, j: number): T[] {
-  const newArray = [...array];
-  [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-  return newArray;
+  const newArray = [...array]
+  ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+  return newArray
 }

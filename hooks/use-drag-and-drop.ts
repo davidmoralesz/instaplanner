@@ -1,12 +1,12 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core"
-import type { ImageItem } from "@/types"
 import {
   ANIMATION_DURATION,
   useSwapAnimation,
 } from "@/hooks/use-swap-animation"
+import type { ImageItem } from "@/types"
+import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core"
+import { useCallback, useState } from "react"
 
 interface UseDragAndDropProps {
   gridImages: ImageItem[]

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useCallback } from "react"
 import { calculateSwapTransform, easings } from "@/lib/animation-utils"
+import { useCallback, useState } from "react"
 
 interface SwapAnimationState {
   isAnimating: boolean

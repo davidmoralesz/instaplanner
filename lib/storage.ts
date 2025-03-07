@@ -1,6 +1,6 @@
-import { openDB, type DBSchema, type IDBPDatabase } from "idb"
 import { AppError, ErrorCodes } from "@/lib/errors"
 import type { ImageItem } from "@/types"
+import { openDB, type DBSchema, type IDBPDatabase } from "idb"
 
 interface GalleryDB extends DBSchema {
   images: {
