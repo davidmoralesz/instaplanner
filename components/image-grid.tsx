@@ -101,7 +101,7 @@ export function ImageGrid({
     <>
       <div ref={setDroppableRef} className="w-full">
         <div
-          className={`mx-auto max-w-3xl rounded-lg transition-all duration-300
+          className={`mx-auto max-w-3xl transition-all duration-300
             ${isOver ? "scale-[0.99] bg-white/10 ring-2 ring-white/20" : "bg-white/5"}`}
         >
           <div className="grid grid-cols-3 gap-1">

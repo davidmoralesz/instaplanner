@@ -11,6 +11,7 @@ import {
   updatePositions,
 } from "@/lib/storage"
 import { AppError } from "@/lib/errors"
+import { swapArrayElements } from "@/lib/utils"
 import { arrayMove } from "@dnd-kit/sortable"
 import type { ImageItem } from "@/types"
 
@@ -260,8 +261,9 @@ export function useImageManagement() {
       // Fisher-Yates shuffle algorithm
       const shuffled = [...sidebarImages]
       for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1))
-        ;[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
+        const j = Math.floor(Math.random() * (i + 1));
+
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
       }
 
       setSidebarImages(shuffled)
@@ -322,31 +324,28 @@ export function useImageManagement() {
   }, [gridImages, toast, handleError])
 
   const updateImageOrder = useCallback(
-    async (
-      container: "grid" | "sidebar",
-      oldIndex: number,
-      newIndex: number
-    ) => {
+    async (container: "grid" | "sidebar", oldIndex: number, newIndex: number) => {
       try {
         if (container === "grid") {
           setGridImages((prev) => {
-            const updated = arrayMove(prev, oldIndex, newIndex)
-            saveImages(updated, "grid").catch(handleError)
-            return updated
-          })
+            const updated = swapArrayElements(prev, oldIndex, newIndex);
+            saveImages(updated, "grid").catch(handleError);
+            return updated;
+          });
         } else {
           setSidebarImages((prev) => {
-            const updated = arrayMove(prev, oldIndex, newIndex)
-            saveImages(updated, "sidebar").catch(handleError)
-            return updated
-          })
+            const updated = swapArrayElements(prev, oldIndex, newIndex);
+            saveImages(updated, "sidebar").catch(handleError);
+            return updated;
+          });
         }
       } catch (error) {
-        handleError(error)
+        handleError(error);
       }
     },
     [handleError]
-  )
+  );
+
 
   const updateGridImages = useCallback(
     (images: ImageItem[]) => {
