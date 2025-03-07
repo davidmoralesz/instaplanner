@@ -3,15 +3,16 @@
 import type React from "react"
 import type { ImageItem } from "@/types"
 
+import Image from "next/image"
 import { useDroppable } from "@dnd-kit/core"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { Trash, ArrowRight, ImageUp } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
+import { Button } from "@/components/ui/button"
 import { ImageContextMenu } from "@/components/shared/image-context-menu"
 import { GhostPlaceholder } from "@/components/ghost-placeholder"
-import Image from "next/image"
+import { useSwapAnimation } from "@/hooks/use-swap-animation"
 
 interface SidebarProps {
   images: ImageItem[]
@@ -117,10 +118,15 @@ function SidebarItem({
     data: image,
   })
 
+  const { getSwapAnimationStyles } = useSwapAnimation()
+
+  const swapAnimationStyles = getSwapAnimationStyles(image.id)
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: transition || undefined,
-    zIndex: isDragging ? 1 : undefined,
+    zIndex: isDragging ? 1 : swapAnimationStyles.zIndex || "auto",
+    ...swapAnimationStyles,
   }
 
   const handleMoveToGrid = (e: React.MouseEvent) => {
@@ -150,6 +156,7 @@ function SidebarItem({
       <motion.div
         ref={setNodeRef}
         style={style}
+        id={`image-${image.id}`}
         className={`group relative cursor-move overflow-hidden bg-black transition-all
           duration-200 ${isDragging ? "opacity-0" : ""}`}
         {...attributes}

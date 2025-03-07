@@ -25,7 +25,7 @@ export function MobileMaintenanceDialog() {
         onEscapeKeyDown={(e) => e.preventDefault()}
         closable={false}
       >
-        <DialogHeader className="flex flex-col items-center gap-2 text-white/70 text-balance text-center">
+        <DialogHeader className="flex flex-col items-center gap-2 text-balance text-center text-white/70">
           <AlertTriangle className="size-6" />
           <DialogTitle className="text-xl text-white">
             Mobile Experience Under Maintenance
