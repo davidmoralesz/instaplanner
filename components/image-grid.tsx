@@ -3,6 +3,7 @@
 import type React from "react"
 import type { ImageItem } from "@/types"
 
+import Image from "next/image"
 import { useState } from "react"
 import { useDroppable } from "@dnd-kit/core"
 import { useSortable } from "@dnd-kit/sortable"
@@ -14,7 +15,7 @@ import { ImageContextMenu } from "@/components/shared/image-context-menu"
 import { SkeletonGrid } from "@/components/skeleton-grid"
 import { Lightbox } from "@/components/lightbox"
 import { GhostPlaceholder } from "@/components/ghost-placeholder"
-import Image from "next/image"
+import { useSwapAnimation } from "@/hooks/use-swap-animation"
 
 interface ImageGridProps {
   images: ImageItem[]
@@ -156,10 +157,15 @@ function GridItem({
     data: image,
   })
 
+  const { getSwapAnimationStyles } = useSwapAnimation()
+
+  const swapAnimationStyles = getSwapAnimationStyles(image.id)
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition: transition || undefined,
-    zIndex: isDragging ? 1 : undefined,
+    zIndex: isDragging ? 1 : swapAnimationStyles.zIndex || "auto",
+    ...swapAnimationStyles,
   }
 
   const handleMoveToSidebar = (e: React.MouseEvent) => {
@@ -188,6 +194,7 @@ function GridItem({
       <motion.div
         ref={setNodeRef}
         style={style}
+        id={`image-${image.id}`}
         className={`group relative cursor-move overflow-hidden bg-black
           ${isDragging ? "opacity-0" : "opacity-100"}`}
         {...attributes}

@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useEffect } from "react"
 import {
   DndContext,
@@ -26,7 +27,6 @@ import { MobileMaintenanceDialog } from "@/components/mobile-maintenance-dialog"
 import { useDragAndDrop } from "@/hooks/use-drag-and-drop"
 import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation"
 import { usePageHandlers } from "@/hooks/use-page-handlers"
-import Image from "next/image"
 
 export default function GalleryPage() {
   const {
@@ -78,13 +78,14 @@ export default function GalleryPage() {
       canRedo,
     })
 
-  const { handleDragStart, handleDragEnd, getActiveImage } = useDragAndDrop({
-    gridImages,
-    sidebarImages,
-    moveImageToGrid,
-    moveImageToSidebar,
-    updateImageOrder,
-  })
+  const { handleDragStart, handleDragEnd, getActiveImage, isSwapAnimating } =
+    useDragAndDrop({
+      gridImages,
+      sidebarImages,
+      moveImageToGrid,
+      moveImageToSidebar,
+      updateImageOrder,
+    })
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -114,7 +115,10 @@ export default function GalleryPage() {
 
   const dragOverlayAnimation = {
     initial: { opacity: 0, scale: 0.8 },
-    animate: { opacity: 1, scale: 1 },
+    animate: {
+      opacity: isSwapAnimating ? 0 : 1,
+      scale: isSwapAnimating ? 0 : 1,
+    },
     exit: { opacity: 0, scale: 0.8 },
     transition: { duration: 0.2 },
   }

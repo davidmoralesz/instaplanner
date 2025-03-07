@@ -3,6 +3,10 @@
 import { useState, useCallback } from "react"
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core"
 import type { ImageItem } from "@/types"
+import {
+  ANIMATION_DURATION,
+  useSwapAnimation,
+} from "@/hooks/use-swap-animation"
 
 interface UseDragAndDropProps {
   gridImages: ImageItem[]
@@ -29,7 +33,7 @@ const dragOverlayConfig = {
 }
 
 /**
- * Custom hook for handling drag and drop functionality
+ * Custom hook for handling drag and drop functionality with direct swap animations
  */
 export function useDragAndDrop({
   gridImages,
@@ -41,23 +45,25 @@ export function useDragAndDrop({
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragOverlayAnimation, setDragOverlayAnimation] =
     useState(dragOverlayConfig)
+  const { startSwapAnimation, isSwapAnimating } = useSwapAnimation()
 
-  // Add this to handle drag start animation
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string)
     setDragOverlayAnimation({
       ...dragOverlayConfig,
       animate: {
         ...dragOverlayConfig.animate,
-        rotate: Math.random() * 6 - 3, // Random slight rotation between -3 and 3 degrees
+        rotate: Math.random() * 6 - 3,
       },
     })
   }, [])
 
   const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      setActiveId(null)
+    async (event: DragEndEvent) => {
       const { active, over } = event
+
+      // Clear active ID after a short delay to allow for animation
+      setTimeout(() => setActiveId(null), 50)
 
       if (!over) return
 
@@ -67,41 +73,57 @@ export function useDragAndDrop({
 
       if (!activeImage) return
 
-      // Moving to grid
-      if (over.id === "grid" || gridImages.some((img) => img.id === over.id)) {
-        // If coming from sidebar
-        if (sidebarImages.find((img) => img.id === active.id)) {
-          moveImageToGrid(active.id as string)
-        }
-        // Reordering within grid
-        else if (gridImages.find((img) => img.id === active.id)) {
-          const oldIndex = gridImages.findIndex((img) => img.id === active.id)
-          const newIndex = gridImages.findIndex((img) => img.id === over.id)
+      const activeInSidebar = sidebarImages.some((img) => img.id === active.id)
+      const activeInGrid = gridImages.some((img) => img.id === active.id)
+      const overInSidebar =
+        over.id === "sidebar" || sidebarImages.some((img) => img.id === over.id)
+      const overInGrid =
+        over.id === "grid" || gridImages.some((img) => img.id === over.id)
 
-          if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-            updateImageOrder("grid", oldIndex, newIndex)
-          }
+      const handleSwapAnimation = async (
+        container: "grid" | "sidebar",
+        oldIndex: number,
+        newIndex: number
+      ) => {
+        const isValidIndex =
+          oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex
+
+        if (isValidIndex) {
+          // Trigger the swap animation before updating the order
+          startSwapAnimation(active.id as string, over.id as string)
+
+          // Delay the actual reordering to allow animation to complete
+          await new Promise((resolve) =>
+            setTimeout(resolve, ANIMATION_DURATION)
+          )
+          await updateImageOrder(container, oldIndex, newIndex)
         }
       }
-      // Moving to sidebar
-      else if (
-        over.id === "sidebar" ||
-        sidebarImages.some((img) => img.id === over.id)
-      ) {
-        if (gridImages.find((img) => img.id === active.id)) {
-          moveImageToSidebar(active.id as string)
-        }
-        // Reordering within sidebar
-        else if (sidebarImages.find((img) => img.id === active.id)) {
-          const oldIndex = sidebarImages.findIndex(
-            (img) => img.id === active.id
-          )
-          const newIndex = sidebarImages.findIndex((img) => img.id === over.id)
 
-          if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-            updateImageOrder("sidebar", oldIndex, newIndex)
-          }
-        }
+      const moveImage = async (moveFn: (id: string) => Promise<void>) => {
+        await moveFn(active.id as string)
+      }
+
+      const reorderImages = async (
+        container: "grid" | "sidebar",
+        images: ImageItem[]
+      ) => {
+        const oldIndex = images.findIndex((img) => img.id === active.id)
+        const newIndex = images.findIndex((img) => img.id === over.id)
+        await handleSwapAnimation(container, oldIndex, newIndex)
+      }
+
+      switch (true) {
+        case overInGrid:
+          if (activeInSidebar) await moveImage(moveImageToGrid)
+          if (activeInGrid) await reorderImages("grid", gridImages)
+          break
+        case overInSidebar:
+          if (activeInGrid) await moveImage(moveImageToSidebar)
+          if (activeInSidebar) await reorderImages("sidebar", sidebarImages)
+          break
+        default:
+          break
       }
     },
     [
@@ -110,6 +132,7 @@ export function useDragAndDrop({
       moveImageToGrid,
       moveImageToSidebar,
       updateImageOrder,
+      startSwapAnimation,
     ]
   )
 
@@ -127,6 +150,7 @@ export function useDragAndDrop({
     handleDragStart,
     handleDragEnd,
     getActiveImage,
-    dragOverlayAnimation, // Export the animation config
+    dragOverlayAnimation,
+    isSwapAnimating,
   }
 }
