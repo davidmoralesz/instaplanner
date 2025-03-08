@@ -33,8 +33,8 @@ export function Lightbox({
   }, [currentIndex])
 
   useEffect(() => {
-    setCurrentIndex(initialIndex)
-  }, [initialIndex])
+    if (open) setCurrentIndex(initialIndex)
+  }, [open, initialIndex])
 
   const handlePrevious = useCallback(() => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
