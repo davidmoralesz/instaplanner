@@ -32,6 +32,10 @@ export function Lightbox({
     setPosition({ x: 0, y: 0 })
   }, [currentIndex])
 
+  useEffect(() => {
+    setCurrentIndex(initialIndex)
+  }, [initialIndex])
+
   const handlePrevious = useCallback(() => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
   }, [images.length])
