@@ -35,6 +35,7 @@ ehthumbs.db
 # IDE and Editor directories/files
 .idea/
 .vscode/
+.prettierrc
 *.suo
 *.ntvs*
 *.njsproj
