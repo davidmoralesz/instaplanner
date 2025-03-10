@@ -22,7 +22,7 @@ export const cn = (...inputs: ClassValue[]) => {
  */
 export const swapArrayElements = <T>(array: T[], i: number, j: number): T[] => {
   const newArray = [...array]
-    ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+  ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
   return newArray
 }
 

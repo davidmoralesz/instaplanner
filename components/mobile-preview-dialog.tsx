@@ -4,7 +4,8 @@ import { Avatar } from "@/components/ui/avatar"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getFormattedTime, getRandomInRange } from "@/lib/utils"
+import { Clock } from "@/components/clock"
+import { getRandomInRange } from "@/lib/utils"
 import type { ImageItem } from "@/types"
 import {
   Bell,
@@ -16,7 +17,6 @@ import {
   Link,
 } from "lucide-react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
 
 interface MobilePreviewDialogProps {
   open: boolean
@@ -29,20 +29,12 @@ export function MobilePreviewDialog({
   onOpenChange,
   images,
 }: MobilePreviewDialogProps) {
-  const [time, setTime] = useState(getFormattedTime())
-
-  useEffect(() => {
-    const intervalId = setInterval(() => setTime(getFormattedTime()), 60000)
-    setTime(getFormattedTime())
-    return () => clearInterval(intervalId)
-  }, [])
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="h-[85vh] max-w-[390px] gap-0 overflow-hidden border-white/10 bg-black p-0">
         {/* Status Bar */}
         <div className="flex items-center justify-between p-4 text-xs text-white/70">
-          <span>{time}</span>
+          <Clock />
         </div>
 
         {/* Navigation Bar */}
