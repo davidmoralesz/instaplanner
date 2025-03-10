@@ -6,7 +6,7 @@ import {
 } from "@/hooks/use-swap-animation"
 import type { ImageItem } from "@/types"
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 interface UseDragAndDropProps {
   gridImages: ImageItem[]
@@ -16,7 +16,8 @@ interface UseDragAndDropProps {
   updateImageOrder: (
     container: "grid" | "sidebar",
     oldIndex: number,
-    newIndex: number
+    newIndex: number,
+    shouldSlide: boolean
   ) => Promise<void>
 }
 
@@ -33,7 +34,8 @@ const dragOverlayConfig = {
 }
 
 /**
- * Custom hook for handling drag and drop functionality with direct swap animations
+ * Custom hook for handling drag and drop functionality with direct swap animations,
+ * with an optional sliding effect when Shift is held.
  */
 export function useDragAndDrop({
   gridImages,
@@ -45,7 +47,21 @@ export function useDragAndDrop({
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragOverlayAnimation, setDragOverlayAnimation] =
     useState(dragOverlayConfig)
+  const [shouldSlide, setShouldSlide] = useState(false)
   const { startSwapAnimation, isSwapAnimating } = useSwapAnimation()
+
+  useEffect(() => {
+    const toggleSlide = (e: KeyboardEvent) => {
+      if (e.key === "Shift") setShouldSlide(e.type === "keydown")
+    }
+
+    window.addEventListener("keydown", toggleSlide)
+    window.addEventListener("keyup", toggleSlide)
+    return () => {
+      window.removeEventListener("keydown", toggleSlide)
+      window.removeEventListener("keyup", toggleSlide)
+    }
+  }, [])
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string)
@@ -89,14 +105,13 @@ export function useDragAndDrop({
           oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex
 
         if (isValidIndex) {
-          // Trigger the swap animation before updating the order
           startSwapAnimation(active.id as string, over.id as string)
 
-          // Delay the actual reordering to allow animation to complete
           await new Promise((resolve) =>
             setTimeout(resolve, ANIMATION_DURATION)
           )
-          await updateImageOrder(container, oldIndex, newIndex)
+
+          await updateImageOrder(container, oldIndex, newIndex, shouldSlide)
         }
       }
 
@@ -133,6 +148,7 @@ export function useDragAndDrop({
       moveImageToSidebar,
       updateImageOrder,
       startSwapAnimation,
+      shouldSlide,
     ]
   )
 

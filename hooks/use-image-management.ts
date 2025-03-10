@@ -12,9 +12,10 @@ import {
 } from "@/lib/storage"
 import { swapArrayElements } from "@/lib/utils"
 import type { ImageItem } from "@/types"
+import { arrayMove } from "@dnd-kit/sortable"
 import { useCallback, useEffect, useState } from "react"
 
-const MAX_IMAGES = 50
+const MAX_IMAGES = 100
 
 export function useImageManagement() {
   const [gridImages, setGridImages] = useState<ImageItem[]>([])
@@ -326,18 +327,25 @@ export function useImageManagement() {
     async (
       container: "grid" | "sidebar",
       oldIndex: number,
-      newIndex: number
+      newIndex: number,
+      shouldSlide: boolean = false
     ) => {
       try {
         if (container === "grid") {
           setGridImages((prev) => {
-            const updated = swapArrayElements(prev, oldIndex, newIndex)
+            const updated = shouldSlide
+              ? arrayMove(prev, oldIndex, newIndex)
+              : swapArrayElements(prev, oldIndex, newIndex)
+
             saveImages(updated, "grid").catch(handleError)
             return updated
           })
         } else {
           setSidebarImages((prev) => {
-            const updated = swapArrayElements(prev, oldIndex, newIndex)
+            const updated = shouldSlide
+              ? arrayMove(prev, oldIndex, newIndex)
+              : swapArrayElements(prev, oldIndex, newIndex)
+
             saveImages(updated, "sidebar").catch(handleError)
             return updated
           })

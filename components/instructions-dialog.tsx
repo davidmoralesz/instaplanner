@@ -106,7 +106,7 @@ export function InstructionsDialog({
                   </div>
                   <span className="text-white/70">+</span>
                   <kbd className="w-fit rounded-md bg-white/10 px-2 py-1 text-xs text-white/70">
-                    Shift
+                    shift
                   </kbd>
                   <span className="text-white/70">+</span>
                   <kbd className="w-fit rounded-md bg-white/10 px-2 py-1 text-xs text-white/70">
@@ -129,6 +129,12 @@ export function InstructionsDialog({
                     Z
                   </kbd>
                   <span className="text-white/70">Undo</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <kbd className="w-fit rounded-md bg-white/10 px-2 py-1 text-xs text-white/70">
+                    shift
+                  </kbd>
+                  <span className="text-white/70">While dragging to slide</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="rounded-md bg-white/10 p-1">
@@ -174,10 +180,17 @@ export function InstructionsDialog({
                 • Hover over an image and use arrow keys to move it
               </li>
               <li className="transition-colors hover:text-white/90">
+                • Hold{" "}
+                <kbd className="inline-block w-fit rounded-md bg-white/10 px-2 py-1 text-xs text-white/70">
+                  shift
+                </kbd>{" "}
+                while dragging to slide an image instead of swapping it
+              </li>
+              <li className="transition-colors hover:text-white/90">
                 • Right-click images for additional options
               </li>
               <li className="transition-colors hover:text-white/90">
-                • Click this help icon
+                • Click the help icon
                 <HelpCircle className="mx-1 inline-block size-4" />
                 anytime to see these instructions again
               </li>
