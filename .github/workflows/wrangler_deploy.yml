@@ -1,23 +1,27 @@
 name: Wrangler Deploy
 
 on:
-  workflow_call:
-    secrets:
-      CLOUDFLARE_API_TOKEN:
-        required: true
-      CLOUDFLARE_ACCOUNT_ID:
-        required: true
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
-    paths-ignore:
-      - ".github/workflows/*.yml"
-      - "README.md"
-      - "LICENSE"
+
 jobs:
+  if_merged:
+    runs-on: ubuntu-latest
+    outputs:
+      merged: ${{ steps.check_merge.outputs.merged }}
+    steps:
+      - run: echo "The PR was merged"
+      - id: check_merge
+        run: echo "::set-output name=merged::${{ github.event.pull_request.merged }}"
+
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    needs: if_merged
+    if: ${{ needs.if_merged.outputs.merged == 'true' }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
