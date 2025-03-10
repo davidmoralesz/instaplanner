@@ -8,6 +8,7 @@ import { ImageUploader } from "@/components/image-uploader"
 import { InstructionsDialog } from "@/components/instructions-dialog"
 import { MobileGallery } from "@/components/mobile-gallery"
 import { MobileMaintenanceDialog } from "@/components/mobile-maintenance-dialog"
+import { MobilePreviewDialog } from "@/components/mobile-preview-dialog"
 import { Sidebar } from "@/components/sidebar"
 import { Button } from "@/components/ui/button"
 import { useDragAndDrop } from "@/hooks/use-drag-and-drop"
@@ -24,7 +25,14 @@ import {
 } from "@dnd-kit/core"
 import { SortableContext } from "@dnd-kit/sortable"
 import { AnimatePresence, motion } from "framer-motion"
-import { ArrowLeft, ArrowRight, Menu, Shuffle, Trash } from "lucide-react"
+import {
+  ArrowLeft,
+  ArrowRight,
+  Menu,
+  Shuffle,
+  Smartphone,
+  Trash,
+} from "lucide-react"
 import Image from "next/image"
 import { useEffect } from "react"
 
@@ -38,6 +46,8 @@ export default function GalleryPage() {
     instructionsOpen,
     setInstructionsOpen,
     imageUploaderRef,
+    previewOpen,
+    setPreviewOpen,
 
     // Image management
     gridImages,
@@ -237,12 +247,17 @@ export default function GalleryPage() {
               <div className="flex-1 overflow-auto md:ml-80">
                 <div className="w-full p-4 md:p-6">
                   <div className="mx-auto mb-6 flex max-w-3xl items-center justify-between">
-                    <h2 className="mr-2 text-lg font-medium">Grid</h2>
-                    <InstructionsDialog
-                      className="mr-auto"
-                      open={instructionsOpen}
-                      onOpenChange={setInstructionsOpen}
-                    />
+                    <h2 className="mr-3 text-lg font-medium">Grid</h2>
+                    <div className="h-4 w-px bg-white/10" />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPreviewOpen(true)}
+                      className="mr-auto flex items-center gap-1 text-white/70 hover:text-white"
+                    >
+                      <Smartphone className="size-4" />
+                      <span className="text-sm">Preview</span>
+                    </Button>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -253,6 +268,11 @@ export default function GalleryPage() {
                       <ArrowLeft className="size-5" />
                       <span className="text-sm">Move all to sidebar</span>
                     </Button>
+                    <div className="h-4 w-px bg-white/10" />
+                    <InstructionsDialog
+                      open={instructionsOpen}
+                      onOpenChange={setInstructionsOpen}
+                    />
                   </div>
 
                   <SortableContext items={gridImages.map((img) => img.id)}>
@@ -320,6 +340,12 @@ export default function GalleryPage() {
           </div>
         </DndContext>
       </DropZone>
+
+      <MobilePreviewDialog
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        images={gridImages}
+      />
     </div>
   )
 }
