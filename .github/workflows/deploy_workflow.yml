@@ -1,29 +1,32 @@
-# name: "Build and Deploy to Cloudlfare Pages"
+name: "Build and Deploy to Cloudlfare Pages"
 
-# concurrency: production
+concurrency: production
 
-# on:
-#   push:
-#     branches:
-#       - main
+on:
+  push:
+    branches:
+      - main
 
-# jobs:
-#   deploy:
-#     name: Serverless Deploy
-#     runs-on: ubuntu-latest
-#     timeout-minutes: 15
+jobs:
+  deploy:
+    name: Serverless Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
 
-#     steps:
-#       - name: Checkout repository
-#         uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-#       - name: Set up Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: "18"
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
 
-#       - name: Install dependencies
-#         run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-#       - name: Run deployment script
-#         run: npm run pages:deploy
+      - name: Set up Cloudflare API Token
+        run: echo "CLOUDFLARE_API_TOKEN=${{ secrets.CLOUDFLARE_API_TOKEN }}" >> $GITHUB_ENV
+
+      - name: Run deployment script
+        run: npm run pages:deploy
