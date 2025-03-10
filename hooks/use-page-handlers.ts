@@ -9,6 +9,7 @@ export function usePageHandlers() {
   const [mobileGalleryOpen, setMobileGalleryOpen] = useState(false)
   const [clearDialogOpen, setClearDialogOpen] = useState(false)
   const [instructionsOpen, setInstructionsOpen] = useState(false)
+  const [previewOpen, setPreviewOpen] = useState(false)
   const imageUploaderRef = useRef<HTMLInputElement>(null)
 
   const { toast } = useToast()
@@ -200,6 +201,8 @@ export function usePageHandlers() {
     instructionsOpen,
     setInstructionsOpen,
     imageUploaderRef,
+    previewOpen,
+    setPreviewOpen,
 
     // Image management
     gridImages,
