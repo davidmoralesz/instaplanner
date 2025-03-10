@@ -6,5 +6,11 @@
   "pages_build_output_dir": ".vercel/output/static",
   "observability": {
     "enabled": true
-  }
+  },
+  "kv_namespaces": [
+    {
+      "binding": "maintenance_mode",
+      "id": "b45ec1d38ea64690890ebebd07e36671"
+    }
+  ]
 }
