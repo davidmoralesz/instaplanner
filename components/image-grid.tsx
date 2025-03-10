@@ -224,7 +224,7 @@ function GridItem({
 
         <div className="relative pb-[125%]">
           <Image
-            src={image.data || "/placeholder.svg"}
+            src={image.data || ""}
             alt="Gallery item"
             className={`absolute inset-0 size-full object-cover transition-transform duration-200
               ${isOver ? "scale-95 opacity-50" : ""}`}
