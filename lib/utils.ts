@@ -7,7 +7,7 @@ import { twMerge } from "tailwind-merge"
  * @param inputs - An array of class values to be merged.
  * @returns A single string with merged class names.
  */
-export function cn(...inputs: ClassValue[]) {
+export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs))
 }
 
@@ -20,9 +20,9 @@ export function cn(...inputs: ClassValue[]) {
  * @param j - The index of the second element to be swapped.
  * @returns A new array with the elements at index `i` and `j` swapped.
  */
-export function swapArrayElements<T>(array: T[], i: number, j: number): T[] {
+export const swapArrayElements = <T>(array: T[], i: number, j: number): T[] => {
   const newArray = [...array]
-  ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
+    ;[newArray[i], newArray[j]] = [newArray[j], newArray[i]]
   return newArray
 }
 
@@ -38,8 +38,11 @@ export const getFormattedTime = (): string =>
   }).format(new Date())
 
 /**
- * Generates a random number between 99 and 999.
+ * Generates a random number between min and max.
  *
- * @returns A random number between 99 and 999.
+ * @param max - The maximum value (inclusive)
+ * @param min - The minimum value (inclusive)
+ * @returns A random number between min and max.
  */
-export const randomNumber = (): number => Math.floor(Math.random() * 901) + 99
+export const getRandomInRange = (min: number, max: number): number =>
+  Math.floor(Math.random() * (max - min + 1)) + min

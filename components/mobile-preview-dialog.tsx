@@ -4,7 +4,7 @@ import { Avatar } from "@/components/ui/avatar"
 import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getFormattedTime, randomNumber } from "@/lib/utils"
+import { getFormattedTime, getRandomInRange } from "@/lib/utils"
 import type { ImageItem } from "@/types"
 import {
   Bell,
@@ -73,11 +73,15 @@ export function MobilePreviewDialog({
                     <div className="text-sm ">posts</div>
                   </div>
                   <div>
-                    <div className="font-semibold">{randomNumber()}</div>
+                    <div className="font-semibold">
+                      {getRandomInRange(499, 999)}
+                    </div>
                     <div className="text-sm ">followers</div>
                   </div>
                   <div>
-                    <div className="font-semibold">{randomNumber()}</div>
+                    <div className="font-semibold">
+                      {getRandomInRange(199, 699)}
+                    </div>
                     <div className="text-sm ">following</div>
                   </div>
                 </div>
