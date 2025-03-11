@@ -9,10 +9,32 @@ import {
 } from "@/components/ui/dialog"
 import { useMobileDetection } from "@/hooks/use-mobile-detection"
 import { AlertTriangle } from "lucide-react"
+import { useState, useEffect } from "react"
 
 export function MobileMaintenanceDialog() {
   const { isMobile, isReady } = useMobileDetection()
-  const maintenanceMode = true
+
+  const [maintenanceMode, setMaintenanceMode] = useState(false)
+
+  useEffect(() => {
+    async function fetchMaintenanceMode() {
+      try {
+        const res = await fetch("/api/maintenance")
+
+        if (res.ok) {
+          const isActive = await res.text()
+          setMaintenanceMode(isActive === "true")
+        } else {
+          console.error('[ERROR] fetch("/api/maintenance")')
+        }
+      } catch (error) {
+        console.error('[ERROR] fetch("/api/maintenance")', error)
+      }
+    }
+
+    fetchMaintenanceMode()
+  }, [])
+
   const showDialog = isReady && isMobile && maintenanceMode
 
   if (!showDialog) return null
