@@ -7,7 +7,6 @@ import "./globals.css"
 export const metadata: Metadata = {
   title: "InstaPlanner",
   description: "A modern image gallery application",
-  generator: "v0.dev",
   icons: {
     icon: "/instaplanner.png",
   },
@@ -20,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="min-h-screen bg-black antialiased">
+      <body className="min-h-screen antialiased">
         <ErrorBoundary>
           {children}
           <Toaster />

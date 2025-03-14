@@ -36,9 +36,9 @@ export function ImageCard({ image, onDelete }: ImageCardProps) {
     <Card
       ref={setNodeRef}
       style={style}
-      className={`group relative cursor-move border-white/10 bg-gray-900/50 backdrop-blur-sm 
-        transition-all duration-200 will-change-transform hover:border-white/20
-        ${isDragging ? "shadow-2xl ring-2 ring-white/20" : "hover:shadow-xl"}`}
+      className={`group relative cursor-move border-foreground/10 bg-background/50 backdrop-blur-sm 
+        transition-all duration-200 will-change-transform hover:border-foreground/20
+        ${isDragging ? "shadow-2xl ring-2 ring-foreground/20" : "hover:shadow-xl"}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       {...attributes}

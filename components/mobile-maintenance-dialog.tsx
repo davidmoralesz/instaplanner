@@ -37,22 +37,24 @@ export function MobileMaintenanceDialog() {
 
   const showDialog = isReady && isMobile && maintenanceMode
 
-  if (!showDialog) return null
+  if (process.env.NEXT_PUBLIC_SHOW_DIALOG !== "true" && !showDialog) {
+    return null
+  }
 
   return (
     <Dialog open={true}>
       <DialogContent
-        className="max-w-[90vw] rounded-lg border-white/10 bg-black text-white"
+        className="max-w-[90vw] rounded-lg border-foreground/10 bg-background text-foreground"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
         closable={false}
       >
-        <DialogHeader className="flex flex-col items-center gap-2 text-balance text-center text-white/70">
+        <DialogHeader className="flex flex-col items-center gap-2 text-balance text-center text-foreground/70">
           <AlertTriangle className="size-6" />
-          <DialogTitle className="text-xl text-white">
+          <DialogTitle className="text-xl text-foreground">
             Mobile Experience Under Maintenance
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-balance text-center">
             We&apos;re currently improving the mobile experience of
             InstaPlanner. Some features may not work as expected on mobile
             devices. For the best experience, please use a desktop browser.

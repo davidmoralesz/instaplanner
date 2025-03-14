@@ -21,10 +21,10 @@ export function GlobalContextMenu({
   return (
     <ContextMenu>
       <ContextMenuTrigger className="size-full">{children}</ContextMenuTrigger>
-      <ContextMenuContent className="border-zinc-800 bg-zinc-900 text-white">
+      <ContextMenuContent className="border-foreground/25 text-foreground/70">
         <ContextMenuItem
           onClick={onShowInstructions}
-          className="flex cursor-pointer items-center gap-2 hover:bg-zinc-800 focus:bg-zinc-800 focus:text-white"
+          className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
         >
           <HelpCircle className="size-4" />
           <span>Show Instructions</span>
