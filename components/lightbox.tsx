@@ -119,7 +119,7 @@ export function Lightbox({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/95 backdrop-blur-lg"
+      className="fixed inset-0 z-50 bg-background/90 backdrop-blur-sm"
     >
       {/* Controls */}
       <div className="absolute right-4 top-4 z-50 flex items-center gap-2">
@@ -128,7 +128,6 @@ export function Lightbox({
           size="icon"
           onClick={() => handleZoom(0.5)}
           disabled={scale >= 3}
-          className="text-white/70 hover:bg-white/10 hover:text-white"
         >
           <ZoomIn className="size-4" />
         </Button>
@@ -137,16 +136,10 @@ export function Lightbox({
           size="icon"
           onClick={() => handleZoom(-0.5)}
           disabled={scale <= 0.5}
-          className="text-white/70 hover:bg-white/10 hover:text-white"
         >
           <ZoomOut className="size-4" />
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="text-white/70 hover:bg-white/10 hover:text-white"
-        >
+        <Button variant="ghost" size="icon" onClick={onClose}>
           <X className="size-4" />
         </Button>
       </div>
@@ -158,7 +151,7 @@ export function Lightbox({
             variant="ghost"
             size="icon"
             onClick={handlePrevious}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:bg-white/10 hover:text-white"
+            className="absolute left-4 top-1/2 -translate-y-1/2"
           >
             <ChevronLeft className="size-6" />
           </Button>
@@ -166,7 +159,7 @@ export function Lightbox({
             variant="ghost"
             size="icon"
             onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:bg-white/10 hover:text-white"
+            className="absolute right-4 top-1/2 -translate-y-1/2"
           >
             <ChevronRight className="size-6" />
           </Button>
@@ -209,7 +202,7 @@ export function Lightbox({
           </motion.div>
         </AnimatePresence>
         {/* Image counter */}
-        <div className="text-sm text-white/70">
+        <div className="text-sm text-foreground/70">
           {currentIndex + 1} / {images.length}
         </div>
       </div>

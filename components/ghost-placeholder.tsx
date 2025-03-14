@@ -25,9 +25,9 @@ export function GhostPlaceholder({
       }}
       className={`pointer-events-none absolute inset-0 ${className}`}
     >
-      <div className="absolute inset-0 bg-white/5" />
-      <div className="absolute inset-0 border border-white/5" />
-      <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent" />
+      <div className="absolute inset-0 bg-foreground/5" />
+      <div className="absolute inset-0 border border-foreground/5" />
+      <div className="absolute inset-0 bg-gradient-to-b from-foreground/10 to-transparent" />
     </motion.div>
   )
 }

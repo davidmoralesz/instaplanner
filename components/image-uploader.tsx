@@ -125,7 +125,6 @@ export const ImageUploader = forwardRef<HTMLInputElement, ImageUploaderProps>(
           onClick={handleClick}
           variant="ghost"
           size="icon"
-          className="text-white/70 hover:text-white"
           disabled={isProcessing}
         >
           <Upload className={`size-4 ${isProcessing ? "animate-pulse" : ""}`} />

@@ -4,6 +4,7 @@ import { useToast } from "@/components/ui/use-toast"
 import { AppError, ErrorCodes } from "@/lib/errors"
 import type { ImageItem } from "@/types"
 import { motion } from "framer-motion"
+import { ImageUp } from "lucide-react"
 import type React from "react"
 import { useCallback, useRef, useState } from "react"
 
@@ -141,7 +142,7 @@ export function DropZone({ children, onDrop }: DropZoneProps) {
     >
       {isDragging && (
         <motion.div
-          className="absolute inset-0 z-50 flex items-center justify-center border-2 border-dashed border-white/20 bg-black/90 backdrop-blur-sm"
+          className="fixed inset-0 z-50 h-screen bg-background/90 backdrop-blur-sm"
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.98 }}
@@ -152,12 +153,13 @@ export function DropZone({ children, onDrop }: DropZoneProps) {
           }}
         >
           <motion.div
-            className="rounded-lg bg-white/10 px-6 py-4 text-xl font-medium text-white/80 backdrop-blur-sm"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
+            className="absolute inset-10 z-50 flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-foreground/20 bg-foreground/5 backdrop-blur-sm"
           >
-            Drop images here
+            <ImageUp className="size-10 opacity-40" strokeWidth={1} />
+            <p className="font-medium text-foreground/40">Drop images here</p>
           </motion.div>
         </motion.div>
       )}

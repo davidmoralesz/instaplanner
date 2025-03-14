@@ -48,11 +48,11 @@ export function ImageContextMenu({
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
-      <ContextMenuContent className="border-white/25 bg-black text-white/70">
+      <ContextMenuContent className="border-foreground/25 text-foreground/70">
         {isEmpty && onUpload && (
           <ContextMenuItem
             onClick={onUpload}
-            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-white/10 focus:text-white"
+            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
           >
             <Upload className="size-4" />
             <span>Upload Images</span>
@@ -62,7 +62,7 @@ export function ImageContextMenu({
         {!isEmpty && onDelete && (
           <ContextMenuItem
             onClick={onDelete}
-            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-white/10 focus:text-white"
+            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
           >
             <Trash className="size-4" />
             <span>Delete</span>
@@ -72,7 +72,7 @@ export function ImageContextMenu({
         {!isEmpty && onMove && (
           <ContextMenuItem
             onClick={onMove}
-            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-white/10 focus:text-white"
+            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
           >
             <ArrowIcon className="size-4" />
             <span>{moveText}</span>
@@ -82,7 +82,7 @@ export function ImageContextMenu({
         {!isEmpty && onMoveAll && (
           <ContextMenuItem
             onClick={onMoveAll}
-            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-white/10 focus:text-white"
+            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
           >
             <ArrowIcon className="size-4" />
             <span>{moveAllText}</span>
@@ -92,7 +92,7 @@ export function ImageContextMenu({
         {!isEmpty && onShuffle && (
           <ContextMenuItem
             onClick={onShuffle}
-            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-white/10 focus:text-white"
+            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
           >
             <Shuffle className="size-4" />
             <span>Shuffle</span>
@@ -102,7 +102,10 @@ export function ImageContextMenu({
         {!isEmpty && onDeleteAll && (
           <ContextMenuItem
             onClick={onDeleteAll}
-            className="flex cursor-pointer items-center gap-2 text-red-400 focus:bg-white/10 focus:text-red-600"
+            className="flex cursor-pointer items-center gap-2 
+              text-red-700 focus:bg-foreground/10 
+              focus:text-red-700 dark:text-red-400
+              dark:focus:text-red-400"
           >
             <Trash className="size-4" />
             <span>Clear All</span>

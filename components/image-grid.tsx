@@ -5,7 +5,7 @@ import type React from "react"
 
 import { GhostPlaceholder } from "@/components/ghost-placeholder"
 import { Lightbox } from "@/components/lightbox"
-import { ImageContextMenu } from "@/components/shared/image-context-menu"
+import { ImageContextMenu } from "@/components/image-context-menu"
 import { SkeletonGrid } from "@/components/skeleton-grid"
 import { Button } from "@/components/ui/button"
 import { useSwapAnimation } from "@/hooks/use-swap-animation"
@@ -78,31 +78,35 @@ export function ImageGrid({
 
   if (images.length === 0) {
     return (
-      <ImageContextMenu
-        moveDirection="toSidebar"
-        isEmpty={true}
-        onUpload={onUpload}
-      >
-        <div ref={setDroppableRef} className="h-[85vh] w-full">
-          <div
-            className={`mx-auto flex size-full max-w-3xl flex-col items-center
-                        justify-center gap-3 rounded-md border border-white/5 transition-colors duration-150
-                        ${isOver ? "bg-white/10" : "bg-white/5"}`}
-          >
-            <ImageUp className="size-5 text-white opacity-30" />
-            <p className="text-white/30">Drop images here</p>
+      <div ref={setDroppableRef} className="transition-all duration-300">
+        <ImageContextMenu
+          moveDirection="toSidebar"
+          isEmpty={true}
+          onUpload={onUpload}
+        >
+          <div className="h-[85vh] w-full">
+            <div
+              className={`mx-auto flex size-full max-w-3xl flex-col items-center
+              justify-center gap-3 rounded-md border border-foreground/5 transition-colors duration-150
+              ${isOver ? "bg-foreground/10" : "bg-foreground/5"}`}
+            >
+              <ImageUp className="size-5 text-foreground opacity-40" />
+              <p className="text-foreground/40">Drop images here</p>
+            </div>
           </div>
-        </div>
-      </ImageContextMenu>
+        </ImageContextMenu>
+      </div>
     )
   }
 
   return (
     <>
-      <div ref={setDroppableRef} className="w-full">
+      <div
+        ref={setDroppableRef}
+        className={`w-full ${images.length > 7 ? "h-full" : "h-[85vh]"}`}
+      >
         <div
-          className={`mx-auto max-w-3xl transition-all duration-300
-            ${isOver ? "scale-[0.99] bg-white/10 ring-2 ring-white/20" : "bg-white/5"}`}
+          className={`mx-auto h-full max-w-3xl p-5 transition-all duration-300 ${isOver ? "bg-foreground/10 bg-gradient-to-t from-background" : ""}`}
         >
           <div className="grid grid-cols-3 gap-1">
             {images.map((image, index) => (
@@ -195,7 +199,7 @@ function GridItem({
         ref={setNodeRef}
         style={style}
         id={`image-${image.id}`}
-        className={`group relative cursor-move overflow-hidden bg-black
+        className={`group relative cursor-move overflow-hidden
           ${isDragging ? "opacity-0" : "opacity-100"}`}
         {...attributes}
         {...listeners}
@@ -217,10 +221,7 @@ function GridItem({
           }
         }}
       >
-        <GhostPlaceholder
-          isVisible={isOver}
-          className="z-10" // Ensure it's above the image
-        />
+        <GhostPlaceholder isVisible={isOver} className="z-10" />
 
         <div className="relative pb-[125%]">
           <Image
@@ -232,15 +233,14 @@ function GridItem({
             fill={true}
           />
           <div
-            className="absolute inset-0 bg-gradient-to-b from-black/60 
-                        to-transparent opacity-0 transition-opacity group-hover:opacity-100"
+            className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent 
+            opacity-0 transition-opacity group-hover:opacity-100"
           >
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-2 top-2 scale-90 text-white/70 
-                            opacity-0 transition-all
-                            duration-200 hover:text-white group-hover:scale-100 group-hover:opacity-100"
+              className="absolute right-1 top-1 text-white opacity-0
+              transition-all hover:text-white/70 group-hover:opacity-100"
               onClick={(e) => {
                 e.stopPropagation()
                 onDelete(image.id)
@@ -253,9 +253,8 @@ function GridItem({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-2 top-2 scale-90 text-white/70 
-                                opacity-0 transition-all
-                                duration-200 hover:text-white group-hover:scale-100 group-hover:opacity-100"
+                className="absolute left-1 top-1 text-white opacity-0 
+                transition-all hover:text-white/70 group-hover:opacity-100"
                 onClick={handleMoveToSidebar}
               >
                 <ArrowLeft className="size-4" />

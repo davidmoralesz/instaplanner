@@ -28,15 +28,15 @@ export class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         this.props.fallback || (
-          <div className="flex min-h-screen items-center justify-center bg-black text-white">
+          <div className="flex min-h-screen items-center justify-center bg-background text-foreground">
             <div className="space-y-4 text-center">
               <h2 className="text-xl font-semibold">Something went wrong</h2>
-              <p className="text-white/70">
+              <p className="text-foreground/70">
                 Please refresh the page to try again
               </p>
               <button
                 onClick={() => window.location.reload()}
-                className="rounded-md bg-white/10 px-4 py-2 transition-colors hover:bg-white/20"
+                className="rounded-md bg-foreground/10 px-4 py-2 transition-colors hover:bg-foreground/20"
               >
                 Refresh Page
               </button>

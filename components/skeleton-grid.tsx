@@ -6,7 +6,7 @@ export function SkeletonGrid() {
       {Array.from({ length: 9 }).map((_, index) => (
         <div key={index} className="relative">
           <div className="relative pb-[125%]">
-            <Skeleton className="absolute inset-0 bg-white/5" />
+            <Skeleton className="absolute inset-0 bg-foreground/5" />
           </div>
         </div>
       ))}

@@ -11,6 +11,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      safelist: [{ pattern: /.*-background/ }, { pattern: /.*-foreground/ }],
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

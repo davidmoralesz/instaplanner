@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -31,10 +30,10 @@ export function ClearDialog({
 }: ClearDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-white/10 bg-black text-white sm:max-w-md">
+      <DialogContent className="border-foreground/10 sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Clear Images</DialogTitle>
-          <DialogDescription className="text-white/70">
+          <DialogDescription className="text-muted-foreground">
             Choose which images you want to clear.
           </DialogDescription>
         </DialogHeader>
@@ -47,7 +46,6 @@ export function ClearDialog({
                 onOpenChange(false)
               }}
               disabled={sidebarCount === 0}
-              className="justify-start hover:bg-white/10 hover:text-white"
             >
               Clear Sidebar – {sidebarCount} images
             </Button>
@@ -58,7 +56,6 @@ export function ClearDialog({
                 onOpenChange(false)
               }}
               disabled={gridCount === 0}
-              className="justify-start hover:bg-white/10 hover:text-white"
             >
               Clear Grid – {gridCount} images
             </Button>
@@ -69,17 +66,11 @@ export function ClearDialog({
                 onOpenChange(false)
               }}
               disabled={sidebarCount === 0 && gridCount === 0}
-              className="justify-start"
             >
               Clear All – {sidebarCount + gridCount} images
             </Button>
           </div>
         </div>
-        <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
