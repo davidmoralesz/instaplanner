@@ -25,6 +25,7 @@ interface SidebarProps {
   hoveredImageId?: string | null
   setHoveredImageId?: (id: string | null) => void
   setHoveredContainer?: (container: "grid" | "sidebar" | null) => void
+  shouldSlide?: boolean
 }
 
 interface SidebarItemProps {
@@ -37,6 +38,7 @@ interface SidebarItemProps {
   hoveredImageId?: string | null
   setHoveredImageId?: (id: string | null) => void
   setHoveredContainer?: (container: "grid" | "sidebar" | null) => void
+  shouldSlide?: boolean
 }
 
 export function Sidebar({
@@ -50,6 +52,7 @@ export function Sidebar({
   hoveredImageId,
   setHoveredImageId,
   setHoveredContainer,
+  shouldSlide = false,
 }: SidebarProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: "sidebar",
@@ -93,6 +96,7 @@ export function Sidebar({
                 hoveredImageId={hoveredImageId}
                 setHoveredImageId={setHoveredImageId}
                 setHoveredContainer={setHoveredContainer}
+                shouldSlide={shouldSlide}
               />
             ))}
           </div>
@@ -106,12 +110,13 @@ function SidebarItem({
   image,
   onDelete,
   onMoveToGrid,
-  // hoveredImageId,
+  hoveredImageId,
   setHoveredImageId,
   setHoveredContainer,
   onMoveAllToGrid,
   onDeleteAll,
   onShuffle,
+  shouldSlide = false,
 }: SidebarItemProps) {
   const {
     attributes,
@@ -174,14 +179,19 @@ function SidebarItem({
         exit={{ opacity: 0, scale: 0.8 }}
         whileHover={{ scale: 1.02 }}
         transition={{
-          type: "spring",
+          type: "tween",
           damping: 20,
           stiffness: 300,
         }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <GhostPlaceholder isVisible={isOver} className="z-10" />
+        <GhostPlaceholder
+          isVisible={isOver}
+          className="z-10"
+          isSwap={isOver && !isDragging && hoveredImageId !== image.id}
+          isSlideMode={shouldSlide}
+        />
 
         <div className="relative pb-[125%]">
           <Image

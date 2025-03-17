@@ -32,6 +32,7 @@ export function usePageHandlers() {
     updateImageOrder,
     updateGridImages,
     updateSidebarImages,
+    swapImages,
   } = useImageManagement()
 
   const handleDeleteImage = useCallback(
@@ -215,6 +216,7 @@ export function usePageHandlers() {
     moveAllToSidebar,
     shuffleSidebarImages,
     updateImageOrder,
+    swapImages,
 
     // Handlers
     handleDeleteImage,

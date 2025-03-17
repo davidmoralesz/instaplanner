@@ -357,6 +357,89 @@ export function useImageManagement() {
     [handleError]
   )
 
+  const swapImages = useCallback(
+    async (sourceId: string, targetId: string) => {
+      try {
+        // Find the source and target images
+        const sourceInGrid = gridImages.find((img) => img.id === sourceId)
+        const sourceInSidebar = sidebarImages.find((img) => img.id === sourceId)
+        const targetInGrid = gridImages.find((img) => img.id === targetId)
+        const targetInSidebar = sidebarImages.find((img) => img.id === targetId)
+
+        // Determine the source and target containers
+        const sourceContainer = sourceInGrid ? "grid" : "sidebar"
+        const targetContainer = targetInGrid ? "grid" : "sidebar"
+
+        // If source and target are in the same container, use updateImageOrder
+        if (sourceContainer === targetContainer) {
+          const images = sourceContainer === "grid" ? gridImages : sidebarImages
+          const sourceIndex = images.findIndex((img) => img.id === sourceId)
+          const targetIndex = images.findIndex((img) => img.id === targetId)
+
+          if (sourceIndex !== -1 && targetIndex !== -1) {
+            await updateImageOrder(
+              sourceContainer,
+              sourceIndex,
+              targetIndex,
+              false
+            )
+          }
+          return
+        }
+
+        // If source and target are in different containers, swap them
+        if (sourceInGrid && targetInSidebar) {
+          // Source is in grid, target is in sidebar
+          setGridImages((prev) => {
+            const updated = prev.map((img) =>
+              img.id === sourceId ? { ...targetInSidebar } : img
+            )
+            saveImages(updated, "grid").catch(handleError)
+            return updated
+          })
+
+          setSidebarImages((prev) => {
+            const updated = prev.map((img) =>
+              img.id === targetId ? { ...sourceInGrid } : img
+            )
+            saveImages(updated, "sidebar").catch(handleError)
+            return updated
+          })
+
+          toast({
+            title: "Images swapped",
+            description: "Images have been swapped between grid and sidebar.",
+          })
+        } else if (sourceInSidebar && targetInGrid) {
+          // Source is in sidebar, target is in grid
+          setGridImages((prev) => {
+            const updated = prev.map((img) =>
+              img.id === targetId ? { ...sourceInSidebar } : img
+            )
+            saveImages(updated, "grid").catch(handleError)
+            return updated
+          })
+
+          setSidebarImages((prev) => {
+            const updated = prev.map((img) =>
+              img.id === sourceId ? { ...targetInGrid } : img
+            )
+            saveImages(updated, "sidebar").catch(handleError)
+            return updated
+          })
+
+          toast({
+            title: "Images swapped",
+            description: "Images have been swapped between sidebar and grid.",
+          })
+        }
+      } catch (error) {
+        handleError(error)
+      }
+    },
+    [gridImages, sidebarImages, updateImageOrder, toast, handleError]
+  )
+
   const updateGridImages = useCallback(
     (images: ImageItem[]) => {
       setGridImages(images)
@@ -391,5 +474,6 @@ export function useImageManagement() {
     updateImageOrder,
     updateGridImages,
     updateSidebarImages,
+    swapImages,
   }
 }
