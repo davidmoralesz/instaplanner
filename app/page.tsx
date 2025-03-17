@@ -22,6 +22,7 @@ import {
   rectIntersection,
   useSensor,
   useSensors,
+  defaultDropAnimationSideEffects,
 } from "@dnd-kit/core"
 import { SortableContext } from "@dnd-kit/sortable"
 import { AnimatePresence, motion } from "framer-motion"
@@ -34,7 +35,7 @@ import {
   Trash,
 } from "lucide-react"
 import Image from "next/image"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import dynamic from "next/dynamic"
 
 const ThemeProviderNoSSR = dynamic(
@@ -68,6 +69,7 @@ export default function GalleryPage() {
     moveAllToSidebar,
     shuffleSidebarImages,
     updateImageOrder,
+    swapImages,
 
     // Handlers
     handleDeleteImage,
@@ -96,6 +98,30 @@ export default function GalleryPage() {
       canRedo,
     })
 
+  const [shouldSlide, setShouldSlide] = useState(false)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Shift") {
+        setShouldSlide(true)
+      }
+    }
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "Shift") {
+        setShouldSlide(false)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    window.addEventListener("keyup", handleKeyUp)
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+      window.removeEventListener("keyup", handleKeyUp)
+    }
+  }, [])
+
   const { handleDragStart, handleDragEnd, getActiveImage, isSwapAnimating } =
     useDragAndDrop({
       gridImages,
@@ -103,6 +129,8 @@ export default function GalleryPage() {
       moveImageToGrid,
       moveImageToSidebar,
       updateImageOrder,
+      swapImages,
+      shouldSlide,
     })
 
   const sensors = useSensors(
@@ -113,41 +141,37 @@ export default function GalleryPage() {
     })
   )
 
-  // Expose functions to window for global access
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.setHoveredImageId = (id: string | null) => setHoveredImageId(id)
-      window.setHoveredContainer = (container: "grid" | "sidebar" | null) =>
-        setHoveredContainer(container)
-    }
-
-    return () => {
-      if (typeof window !== "undefined") {
-        delete window.setHoveredImageId
-        delete window.setHoveredContainer
-      }
-    }
-  }, [setHoveredImageId, setHoveredContainer])
-
   const activeImage = getActiveImage()
 
   const dragOverlayAnimation = {
-    initial: { opacity: 0, scale: 0.8 },
+    initial: { opacity: 0, rotate: 0 },
     animate: {
-      opacity: isSwapAnimating ? 0 : 1,
-      scale: isSwapAnimating ? 0 : 1,
+      opacity: isSwapAnimating ? 0 : 0.5,
+      rotate: isSwapAnimating ? 0 : Math.random() < 0.5 ? -3 : 3,
     },
-    exit: { opacity: 0, scale: 0.8 },
-    transition: { duration: 0.2 },
+    exit: { opacity: 0, rotate: 0 },
+    transition: {
+      type: "tween",
+      damping: 15,
+      stiffness: 300,
+    },
+  }
+
+  const dragDropAnimation = {
+    duration: 250,
+    easing: "ease",
+    sideEffects: defaultDropAnimationSideEffects({
+      styles: {
+        dragOverlay: {
+          transition: "all 250ms ease-out",
+          opacity: "0",
+        },
+      },
+    }),
   }
 
   return (
-    <ThemeProviderNoSSR
-      attribute="class"
-      defaultTheme="dark"
-      // enableSystem
-      // disableTransitionOnChange
-    >
+    <ThemeProviderNoSSR attribute="class" defaultTheme="dark">
       <main>
         <MobileMaintenanceDialog />
 
@@ -220,6 +244,7 @@ export default function GalleryPage() {
                         hoveredImageId={hoveredImageId}
                         setHoveredImageId={setHoveredImageId}
                         setHoveredContainer={setHoveredContainer}
+                        shouldSlide={shouldSlide}
                       />
                     </AnimatePresence>
                   </SortableContext>
@@ -303,6 +328,7 @@ export default function GalleryPage() {
                           hoveredImageId={hoveredImageId}
                           setHoveredImageId={setHoveredImageId}
                           setHoveredContainer={setHoveredContainer}
+                          shouldSlide={shouldSlide}
                         />
                       </AnimatePresence>
                     </SortableContext>
@@ -330,13 +356,12 @@ export default function GalleryPage() {
                 gridCount={gridImages.length}
               />
 
-              <DragOverlay dropAnimation={null}>
+              <DragOverlay dropAnimation={dragDropAnimation}>
                 {activeImage ? (
                   <motion.div
                     {...dragOverlayAnimation}
                     className="relative aspect-[4/5] w-full overflow-hidden"
                     style={{
-                      transformOrigin: "0 0",
                       filter: "drop-shadow(0 25px 25px rgb(0 0 0 / 0.15))",
                       pointerEvents: "none",
                     }}

@@ -188,6 +188,10 @@ export function InstructionsDialog({
                 while dragging to slide an image instead of swapping it
               </li>
               <li className="transition-colors hover:text-foreground/90">
+                • Drag an image directly onto another image to swap their
+                positions
+              </li>
+              <li className="transition-colors hover:text-foreground/90">
                 • Right-click images for additional options
               </li>
               <li className="transition-colors hover:text-foreground/90">

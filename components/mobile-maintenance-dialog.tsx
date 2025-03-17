@@ -8,38 +8,20 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useMobileDetection } from "@/hooks/use-mobile-detection"
+import { useMaintenanceMode } from "@/hooks/use-maintenance-mode"
 import { AlertTriangle } from "lucide-react"
-import { useState, useEffect } from "react"
 
 export function MobileMaintenanceDialog() {
   const { isMobile, isReady } = useMobileDetection()
+  const { maintenanceMode } = useMaintenanceMode()
 
-  const [maintenanceMode, setMaintenanceMode] = useState(false)
+  const shouldShowDialog =
+    process.env.NEXT_PUBLIC_SHOW_DIALOG !== "true" &&
+    isReady &&
+    isMobile &&
+    maintenanceMode
 
-  useEffect(() => {
-    async function fetchMaintenanceMode() {
-      try {
-        const res = await fetch("/api/maintenance")
-
-        if (res.ok) {
-          const isActive = await res.text()
-          setMaintenanceMode(isActive === "true")
-        } else {
-          console.error('[ERROR] fetch("/api/maintenance")')
-        }
-      } catch (error) {
-        console.error('[ERROR] fetch("/api/maintenance")', error)
-      }
-    }
-
-    fetchMaintenanceMode()
-  }, [])
-
-  const showDialog = isReady && isMobile && maintenanceMode
-
-  if (process.env.NEXT_PUBLIC_SHOW_DIALOG !== "true" && !showDialog) {
-    return null
-  }
+  if (!shouldShowDialog) return null
 
   return (
     <Dialog open={true}>

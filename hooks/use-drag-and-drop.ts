@@ -19,17 +19,15 @@ interface UseDragAndDropProps {
     newIndex: number,
     shouldSlide: boolean
   ) => Promise<void>
+  swapImages: (sourceId: string, targetId: string) => Promise<void>
+  shouldSlide: boolean
 }
 
-// Add dragOverlay animation configuration
 const dragOverlayConfig = {
-  initial: { opacity: 0, scale: 0.85, rotate: -3 },
-  animate: { opacity: 1, scale: 1.05, rotate: 0 },
-  exit: { opacity: 0, scale: 0.85, rotate: 3 },
   transition: {
-    type: "spring",
+    type: "tween",
     damping: 15,
-    stiffness: 200,
+    stiffness: 300,
   },
 }
 
@@ -43,16 +41,24 @@ export function useDragAndDrop({
   moveImageToGrid,
   moveImageToSidebar,
   updateImageOrder,
+  swapImages,
+  shouldSlide = false,
 }: UseDragAndDropProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [dragOverlayAnimation, setDragOverlayAnimation] =
     useState(dragOverlayConfig)
-  const [shouldSlide, setShouldSlide] = useState(false)
+  const [internalShouldSlide, setInternalShouldSlide] = useState(shouldSlide)
   const { startSwapAnimation, isSwapAnimating } = useSwapAnimation()
 
   useEffect(() => {
+    setInternalShouldSlide(shouldSlide)
+  }, [shouldSlide])
+
+  useEffect(() => {
+    if (shouldSlide !== undefined) return
+
     const toggleSlide = (e: KeyboardEvent) => {
-      if (e.key === "Shift") setShouldSlide(e.type === "keydown")
+      if (e.key === "Shift") setInternalShouldSlide(e.type === "keydown")
     }
 
     window.addEventListener("keydown", toggleSlide)
@@ -61,18 +67,32 @@ export function useDragAndDrop({
       window.removeEventListener("keydown", toggleSlide)
       window.removeEventListener("keyup", toggleSlide)
     }
-  }, [])
+  }, [shouldSlide])
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string)
-    setDragOverlayAnimation({
-      ...dragOverlayConfig,
-      animate: {
-        ...dragOverlayConfig.animate,
-        rotate: Math.random() * 6 - 3,
-      },
-    })
+    setDragOverlayAnimation({ ...dragOverlayConfig })
   }, [])
+
+  const handleSwapAnimation = useCallback(
+    async (
+      container: "grid" | "sidebar",
+      oldIndex: number,
+      newIndex: number
+    ) => {
+      const images = container === "grid" ? gridImages : sidebarImages
+      startSwapAnimation(images[oldIndex].id, images[newIndex].id)
+      await new Promise((resolve) => setTimeout(resolve, ANIMATION_DURATION))
+      await updateImageOrder(container, oldIndex, newIndex, internalShouldSlide)
+    },
+    [
+      startSwapAnimation,
+      updateImageOrder,
+      internalShouldSlide,
+      gridImages,
+      sidebarImages,
+    ]
+  )
 
   const handleDragEnd = useCallback(
     async (event: DragEndEvent) => {
@@ -96,49 +116,46 @@ export function useDragAndDrop({
       const overInGrid =
         over.id === "grid" || gridImages.some((img) => img.id === over.id)
 
-      const handleSwapAnimation = async (
-        container: "grid" | "sidebar",
-        oldIndex: number,
-        newIndex: number
-      ) => {
-        const isValidIndex =
-          oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex
+      // Check if we're hovering over a specific image (not just a container)
+      const isOverSpecificImage = over.id !== "grid" && over.id !== "sidebar"
 
-        if (isValidIndex) {
-          startSwapAnimation(active.id as string, over.id as string)
+      // Handle swapping between containers - only if Shift is NOT pressed
+      if (
+        isOverSpecificImage &&
+        ((activeInGrid && overInSidebar) || (activeInSidebar && overInGrid)) &&
+        !internalShouldSlide
+      ) {
+        // Trigger the swap animation
+        startSwapAnimation(active.id as string, over.id as string)
 
-          await new Promise((resolve) =>
-            setTimeout(resolve, ANIMATION_DURATION)
-          )
+        // Wait for animation to complete
+        await new Promise((resolve) => setTimeout(resolve, ANIMATION_DURATION))
 
-          await updateImageOrder(container, oldIndex, newIndex, shouldSlide)
+        // Perform the swap
+        await swapImages(active.id as string, over.id as string)
+        return
+      }
+
+      // Handle reordering within the same container
+      if ((activeInGrid && overInGrid) || (activeInSidebar && overInSidebar)) {
+        const container = activeInGrid ? "grid" : "sidebar"
+        const images = activeInGrid ? gridImages : sidebarImages
+
+        // If dropping on a specific image
+        if (isOverSpecificImage) {
+          const oldIndex = images.findIndex((img) => img.id === active.id)
+          const newIndex = images.findIndex((img) => img.id === over.id)
+
+          if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+            await handleSwapAnimation(container, oldIndex, newIndex)
+          }
         }
       }
-
-      const moveImage = async (moveFn: (id: string) => Promise<void>) => {
-        await moveFn(active.id as string)
-      }
-
-      const reorderImages = async (
-        container: "grid" | "sidebar",
-        images: ImageItem[]
-      ) => {
-        const oldIndex = images.findIndex((img) => img.id === active.id)
-        const newIndex = images.findIndex((img) => img.id === over.id)
-        await handleSwapAnimation(container, oldIndex, newIndex)
-      }
-
-      switch (true) {
-        case overInGrid:
-          if (activeInSidebar) await moveImage(moveImageToGrid)
-          if (activeInGrid) await reorderImages("grid", gridImages)
-          break
-        case overInSidebar:
-          if (activeInGrid) await moveImage(moveImageToSidebar)
-          if (activeInSidebar) await reorderImages("sidebar", sidebarImages)
-          break
-        default:
-          break
+      // Handle moving between containers (without swapping)
+      else if (activeInSidebar && overInGrid) {
+        await moveImageToGrid(active.id as string)
+      } else if (activeInGrid && overInSidebar) {
+        await moveImageToSidebar(active.id as string)
       }
     },
     [
@@ -148,7 +165,9 @@ export function useDragAndDrop({
       moveImageToSidebar,
       updateImageOrder,
       startSwapAnimation,
-      shouldSlide,
+      internalShouldSlide,
+      swapImages,
+      handleSwapAnimation,
     ]
   )
 
@@ -168,5 +187,6 @@ export function useDragAndDrop({
     getActiveImage,
     dragOverlayAnimation,
     isSwapAnimating,
+    shouldSlide: internalShouldSlide,
   }
 }

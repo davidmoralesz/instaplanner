@@ -29,6 +29,7 @@ interface ImageGridProps {
   setHoveredImageId?: (id: string | null) => void
   setHoveredContainer?: (container: "grid" | "sidebar" | null) => void
   onImageClick?: (index: number) => void
+  shouldSlide?: boolean
 }
 
 interface GridItemProps {
@@ -41,6 +42,7 @@ interface GridItemProps {
   setHoveredImageId?: (id: string | null) => void
   setHoveredContainer?: (container: "grid" | "sidebar" | null) => void
   onClick?: () => void
+  shouldSlide?: boolean
 }
 
 export function ImageGrid({
@@ -54,7 +56,7 @@ export function ImageGrid({
   hoveredImageId,
   setHoveredImageId,
   setHoveredContainer,
-  // onImageClick,
+  shouldSlide = false,
 }: ImageGridProps) {
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
     id: "grid",
@@ -121,6 +123,7 @@ export function ImageGrid({
                 setHoveredImageId={setHoveredImageId}
                 setHoveredContainer={setHoveredContainer}
                 onClick={() => handleImageClick(index)}
+                shouldSlide={shouldSlide}
               />
             ))}
           </div>
@@ -143,10 +146,11 @@ function GridItem({
   onMoveToSidebar,
   onMoveAllToSidebar,
   onDeleteAll,
-  // hoveredImageId,
+  hoveredImageId,
   setHoveredImageId,
   setHoveredContainer,
   onClick,
+  shouldSlide = false,
 }: GridItemProps) {
   const {
     attributes,
@@ -208,7 +212,7 @@ function GridItem({
         exit={{ opacity: 0, scale: 0.8 }}
         whileHover={{ scale: 1.02 }}
         transition={{
-          type: "spring",
+          type: "tween",
           damping: 20,
           stiffness: 300,
         }}
@@ -221,13 +225,18 @@ function GridItem({
           }
         }}
       >
-        <GhostPlaceholder isVisible={isOver} className="z-10" />
+        <GhostPlaceholder
+          isVisible={isOver}
+          className="z-10"
+          isSwap={isOver && !isDragging && hoveredImageId !== image.id}
+          isSlideMode={shouldSlide}
+        />
 
         <div className="relative pb-[125%]">
           <Image
             src={image.data || ""}
             alt="Gallery item"
-            className={`absolute inset-0 size-full object-cover transition-transform duration-200
+            className={`absolute inset-0 transition-transform duration-200
               ${isOver ? "scale-95 opacity-50" : ""}`}
             draggable={false}
             fill={true}
