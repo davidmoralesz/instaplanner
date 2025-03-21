@@ -20,8 +20,14 @@ import {
   Upload,
 } from "lucide-react"
 import { useEffect, useState } from "react"
-
-const INSTRUCTIONS_KEY = "gallery-instructions-shown"
+import { INSTRUCTIONS_STORAGE_KEY } from "@/config/constants"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 
 interface InstructionsDialogProps {
   className?: string
@@ -29,6 +35,13 @@ interface InstructionsDialogProps {
   onOpenChange?: (open: boolean) => void
 }
 
+/**
+ * InstructionsDialog component displays a modal with usage instructions for InstaPlanner.
+ * @param className - Custom additional class names to be applied to the component
+ * @param open - Determines if the dialog is open (optional)
+ * @param onOpenChange - Callback to handle dialog open state changes (optional)
+ * @returns A dialog component containing app instructions and tips.
+ */
 export function InstructionsDialog({
   open,
   onOpenChange,
@@ -38,10 +51,10 @@ export function InstructionsDialog({
   const handleOpenChange = onOpenChange ?? setInternalOpen
 
   useEffect(() => {
-    const instructionsShown = localStorage.getItem(INSTRUCTIONS_KEY)
+    const instructionsShown = localStorage.getItem(INSTRUCTIONS_STORAGE_KEY)
     if (!instructionsShown) {
       handleOpenChange(true)
-      localStorage.setItem(INSTRUCTIONS_KEY, "true")
+      localStorage.setItem(INSTRUCTIONS_STORAGE_KEY, "true")
     }
   }, [handleOpenChange])
 
@@ -66,7 +79,7 @@ export function InstructionsDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-6 pt-4">
           {/* Basic Usage */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Basic Usage</h3>
@@ -174,32 +187,49 @@ export function InstructionsDialog({
           </div>
 
           {/* Tips */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Tips</h3>
-            <ul className="space-y-3 text-sm text-foreground/70">
-              <li className="transition-colors hover:text-foreground/90">
-                • Hover over an image and use arrow keys to move it
-              </li>
-              <li className="transition-colors hover:text-foreground/90">
-                • Hold{" "}
-                <kbd className="inline-block w-fit rounded-md bg-foreground/10 px-2 py-1 text-xs text-foreground/70">
-                  shift
-                </kbd>{" "}
-                while dragging to slide an image instead of swapping it
-              </li>
-              <li className="transition-colors hover:text-foreground/90">
-                • Drag an image directly onto another image to swap their
-                positions
-              </li>
-              <li className="transition-colors hover:text-foreground/90">
-                • Right-click images for additional options
-              </li>
-              <li className="transition-colors hover:text-foreground/90">
-                • Click the help icon
-                <HelpCircle className="mx-1 inline-block size-4" />
-                anytime to see these instructions again
-              </li>
-            </ul>
+          <div className="rounded-md border border-foreground/10 bg-foreground/5 py-4">
+            <Carousel
+              className="mx-auto max-w-md"
+              opts={{
+                align: "center",
+                loop: true,
+              }}
+            >
+              <CarouselContent className="text-xs text-foreground/70">
+                <CarouselItem>
+                  <span className="font-medium">TIP:&nbsp;</span>
+                  Hover over an image and use arrow keys to move it
+                </CarouselItem>
+                <CarouselItem>
+                  <span className="font-medium">TIP:&nbsp;</span>
+                  Hold
+                  <kbd className="text-foreground">&nbsp;shift&nbsp;</kbd>
+                  while dragging to slide an image instead of swapping it
+                </CarouselItem>
+                <CarouselItem>
+                  <span className="font-medium">TIP:&nbsp;</span>
+                  Drag an image directly onto another image to swap their
+                  positions
+                </CarouselItem>
+                <CarouselItem>
+                  <span className="font-medium">TIP:&nbsp;</span>
+                  Drag an image directly onto another image to swap their
+                  positions
+                </CarouselItem>
+                <CarouselItem>
+                  <span className="font-medium">TIP:&nbsp;</span>
+                  Right-click images for additional options
+                </CarouselItem>
+                <CarouselItem>
+                  <span className="font-medium">TIP:&nbsp;</span>
+                  Click the help icon
+                  <HelpCircle className="mx-1 inline-block size-4" />
+                  anytime to see these instructions again
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious variant={"ghost"} />
+              <CarouselNext variant={"ghost"} />
+            </Carousel>
           </div>
         </div>
       </DialogContent>
