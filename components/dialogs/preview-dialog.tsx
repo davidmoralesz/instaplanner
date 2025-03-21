@@ -1,7 +1,13 @@
 "use client"
 
 import { Avatar } from "@/components/ui/avatar"
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
@@ -10,34 +16,53 @@ import { getRandomInRange } from "@/lib/utils"
 import type { ImageItem } from "@/types"
 import { Bookmark, ChevronLeft, Film, Grid, Link } from "lucide-react"
 import Image from "next/image"
-import { DialogClose } from "@radix-ui/react-dialog"
+import { useEffect } from "react"
 
-interface MobilePreviewDialogProps {
+interface PreviewDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   images: ImageItem[]
 }
 
-export function MobilePreviewDialog({
+/**
+ * Component for displaying a mobile preview dialog with images and navigation.
+ * @param open - Determines if the dialog is open
+ * @param onOpenChange - Callback to handle dialog open state changes
+ * @param images - List of images to be displayed in the preview
+ * @returns A mobile preview dialog with navigation, tabs, and image grid.
+ */
+export function PreviewDialog({
   open,
   onOpenChange,
   images,
-}: MobilePreviewDialogProps) {
+}: PreviewDialogProps) {
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      console.debug("[PreviewDialog] Rendered with", {
+        open,
+        imageCount: images.length,
+      })
+    }
+  }, [open, images.length])
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="h-[85vh] w-[390px] max-w-[90vw] gap-0 overflow-hidden border-foreground/10 p-0">
-        <DialogTitle className="sr-only">Mobile Preview</DialogTitle>
-
         {/* Status Bar */}
-        <div className="flex items-center justify-between p-4 text-xs text-foreground/70">
+        <div className="p-4 text-xs text-foreground/70">
+          <DialogTitle className="sr-only">Mobile Preview</DialogTitle>
+          <DialogDescription className="sr-only">
+            Preview your layout in a mobile interface
+          </DialogDescription>
           <Clock />
         </div>
 
         {/* Navigation Bar */}
         <div className="flex items-center justify-between border-b border-foreground/10 px-4 py-2">
           <div className="flex items-center gap-6">
-            <DialogClose>
-              <ChevronLeft className="size-7 hover:text-foreground/70" />
+            <DialogClose className="hover:text-foreground/70">
+              <ChevronLeft className="size-7" />
+              <span className="sr-only">Close preview</span>
             </DialogClose>
             <span className="font-semibold">instaplanner</span>
           </div>
@@ -85,6 +110,7 @@ export function MobilePreviewDialog({
                   href="https://github.com/davidmoralesz/instaplanner"
                   className="transition-colors hover:text-foreground/70"
                   target="_blank"
+                  rel="noreferrer"
                 >
                   <Link className="mr-1.5 inline size-4" />
                   gh.com/davidmoralesz/instaplanner
@@ -95,11 +121,12 @@ export function MobilePreviewDialog({
                   <Skeleton className="size-full rounded-full bg-black/10 dark:bg-white/10" />
                 </Avatar>
                 <span>
-                  Followed by{" "}
+                  Followed by&nbsp;
                   <a
                     href="https://instagram.com/dmoralesz"
                     className="font-medium transition-colors hover:text-foreground/70"
                     target="_blank"
+                    rel="noreferrer"
                   >
                     dmoralesz
                   </a>
