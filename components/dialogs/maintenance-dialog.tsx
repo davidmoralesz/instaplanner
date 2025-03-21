@@ -1,5 +1,3 @@
-"use client"
-
 import {
   Dialog,
   DialogContent,
@@ -11,15 +9,15 @@ import { useMobileDetection } from "@/hooks/use-mobile-detection"
 import { useMaintenanceMode } from "@/hooks/use-maintenance-mode"
 import { AlertTriangle } from "lucide-react"
 
-export function MobileMaintenanceDialog() {
+/**
+ * Component for displaying a maintenance dialog on mobile devices when maintenance mode is active.
+ * @returns A maintenance dialog displayed when the app is in maintenance mode on mobile devices.
+ */
+export function MaintenanceDialog() {
   const { isMobile, isReady } = useMobileDetection()
   const { maintenanceMode } = useMaintenanceMode()
 
-  const shouldShowDialog =
-    process.env.NEXT_PUBLIC_SHOW_DIALOG !== "true" &&
-    isReady &&
-    isMobile &&
-    maintenanceMode
+  const shouldShowDialog = isReady && isMobile && maintenanceMode
 
   if (!shouldShowDialog) return null
 
