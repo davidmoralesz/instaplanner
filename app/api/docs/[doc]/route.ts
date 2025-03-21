@@ -11,7 +11,10 @@ export const runtime = "edge"
  * @param context - The context object containing the document key (doc)
  * @returns A Response object containing the document content or an error message.
  */
-export async function GET(req: Request, context: { params: { doc: string } }) {
+export async function GET(
+  req: Request,
+  context: { params: Promise<{ doc: string }> }
+) {
   const { doc: docKey } = await context.params
 
   if (!docKey) return new Response("Missing doc parameter", { status: 400 })
