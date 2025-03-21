@@ -1,19 +1,37 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
+import type { ContainerType } from "@/types"
 
 interface UseKeyboardNavigationProps {
   onMoveToGrid: (id: string) => Promise<void>
   onMoveToSidebar: (id: string) => Promise<void>
   onMoveAllToGrid: () => Promise<void>
   onMoveAllToSidebar: () => Promise<void>
-  onDelete: (id: string, container: "grid" | "sidebar") => Promise<void>
+  onDelete: (id: string, container: ContainerType) => Promise<void>
   onUndo: () => Promise<void>
   onRedo: () => Promise<void>
   canUndo: boolean
   canRedo: boolean
 }
 
+/**
+ * Custom hook for managing keyboard navigation and actions for image manipulation.
+ * @param onMoveToGrid - Callback for moving a single image to the grid
+ * @param onMoveToSidebar - Callback for moving a single image to the sidebar
+ * @param onMoveAllToGrid - Callback for moving all images to the grid
+ * @param onMoveAllToSidebar - Callback for moving all images to the sidebar
+ * @param onDelete - Callback for deleting an image
+ * @param onUndo - Callback for undoing the last action
+ * @param onRedo - Callback for redoing the last undone action
+ * @param canUndo - Boolean indicating if undo is possible
+ * @param canRedo - Boolean indicating if redo is possible
+ * @returns An object with the following properties:
+ * @property hoveredImageId - The ID of the currently hovered image
+ * @property setHoveredImageId - Function to set the currently hovered image ID
+ * @property hoveredContainer - The container (grid or sidebar) where the image is hovered
+ * @property setHoveredContainer - Function to set the hovered container
+ */
 export function useKeyboardNavigation({
   onMoveToGrid,
   onMoveToSidebar,
@@ -26,9 +44,8 @@ export function useKeyboardNavigation({
   canRedo,
 }: UseKeyboardNavigationProps) {
   const [hoveredImageId, setHoveredImageId] = useState<string | null>(null)
-  const [hoveredContainer, setHoveredContainer] = useState<
-    "grid" | "sidebar" | null
-  >(null)
+  const [hoveredContainer, setHoveredContainer] =
+    useState<ContainerType | null>(null)
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -67,7 +84,7 @@ export function useKeyboardNavigation({
         }
       }
 
-      // Handle undo/redo (works regardless of hover state)
+      // Handle undo/redo
       if (modifierKey && e.key.toLowerCase() === "z") {
         e.preventDefault()
         if (e.shiftKey) {
