@@ -9,13 +9,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { useDroppable } from "@dnd-kit/core"
 import { SortableContext } from "@dnd-kit/sortable"
 import { AnimatePresence } from "framer-motion"
-import {
-  ChevronDown,
-  ImageUp,
-  MoveRight,
-  Shuffle,
-  Trash2 as Trash,
-} from "lucide-react"
+import { ChevronDown, ImageUp, MoveRight, Shuffle, Trash } from "lucide-react"
 import { ImageCard } from "./grid/image-card"
 
 interface SidebarSheetProps {
@@ -23,9 +17,9 @@ interface SidebarSheetProps {
   onOpenChange: (open: boolean) => void
   images: ImageItem[]
   onDelete: (id: string) => void
-  onClearAll: () => void
+  onDeleteAll: () => void
   onMoveAllToGrid: () => void
-  onShuffleSidebar: () => void
+  onShuffle: () => void
   onMoveToGrid?: (id: string) => void
   hoveredImageId?: string | null
   setHoveredImageId?: (id: string | null) => void
@@ -40,9 +34,9 @@ interface SidebarSheetProps {
  * @param onOpenChange - A function to toggle the open state of the sidebar sheet
  * @param images - An array of image objects to display in the sidebar
  * @param onDelete - Callback function to delete an image
- * @param onClearAll - Callback function to clear all images in the sidebar
+ * @param onDeleteAll - Callback function to clear all images in the sidebar
  * @param onMoveAllToGrid - Callback function to move all images to the grid
- * @param onShuffleSidebar - Callback function to shuffle images in the sidebar
+ * @param onShuffle - Callback function to shuffle images in the sidebar
  * @param onMoveToGrid - Callback function to move an image to the grid
  * @param hoveredImageId - The ID of the currently hovered image
  * @param setHoveredImageId - Function to set the hovered image ID
@@ -55,9 +49,9 @@ export function SidebarSheet({
   onOpenChange,
   images,
   onDelete,
-  onClearAll,
+  onDeleteAll,
   onMoveAllToGrid,
-  onShuffleSidebar,
+  onShuffle,
   onMoveToGrid,
   hoveredImageId,
   setHoveredImageId,
@@ -91,7 +85,7 @@ export function SidebarSheet({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={onShuffleSidebar}
+                onClick={onShuffle}
                 title="Shuffle images"
                 className="text-foreground/50 hover:text-foreground"
                 disabled={images.length <= 1}
@@ -113,7 +107,7 @@ export function SidebarSheet({
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={onClearAll}
+                onClick={onDeleteAll}
                 className="text-foreground/50 hover:text-foreground"
               >
                 <Trash className="size-4" />
@@ -126,6 +120,8 @@ export function SidebarSheet({
           <SidebarContent
             images={images}
             onDelete={onDelete}
+            onDeleteAll={onDeleteAll}
+            onShuffle={onShuffle}
             onMoveToGrid={onMoveToGrid}
             hoveredImageId={hoveredImageId}
             setHoveredImageId={setHoveredImageId}
@@ -153,7 +149,10 @@ export function SidebarSheet({
 interface SidebarContentProps {
   images: ImageItem[]
   onDelete: (id: string) => void
+  onDeleteAll: () => void
   onMoveToGrid?: (id: string) => void
+  onMoveAllToGrid?: () => void
+  onShuffle: () => void
   onUpload?: () => void
   hoveredImageId?: string | null
   setHoveredImageId?: (id: string | null) => void
@@ -178,8 +177,11 @@ interface SidebarContentProps {
 export function SidebarContent({
   images,
   onDelete,
+  onDeleteAll,
   onMoveToGrid,
+  onMoveAllToGrid,
   onUpload,
+  onShuffle,
   hoveredImageId,
   setHoveredImageId,
   setHoveredContainer,
@@ -196,11 +198,7 @@ export function SidebarContent({
           ref={setNodeRef}
           className="h-[calc(100vh-109px)] flex-1 overflow-y-auto p-3 transition-all"
         >
-          <ImageContextMenu
-            moveDirection="toGrid"
-            isEmpty={true}
-            onUpload={onUpload}
-          >
+          <ImageContextMenu isEmpty={true} onUpload={onUpload}>
             <div
               className={`flex h-full flex-col items-center justify-center gap-3 rounded-md border border-foreground/5 ${
                 isOver ? "bg-foreground/10" : "bg-foreground/5"
@@ -227,7 +225,10 @@ export function SidebarContent({
                     container="sidebar"
                     image={image}
                     onDelete={onDelete}
+                    onDeleteAll={onDeleteAll}
                     onMoveToGrid={onMoveToGrid}
+                    onMoveAllToGrid={onMoveAllToGrid}
+                    onShuffle={onShuffle}
                     hoveredImageId={hoveredImageId}
                     setHoveredImageId={setHoveredImageId}
                     setHoveredContainer={setHoveredContainer}

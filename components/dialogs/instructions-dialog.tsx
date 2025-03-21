@@ -16,7 +16,7 @@ import {
   Grip,
   HelpCircle,
   Shuffle,
-  Trash2 as Trash,
+  Trash,
   Upload,
 } from "lucide-react"
 import { useEffect, useState } from "react"

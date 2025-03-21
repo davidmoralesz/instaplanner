@@ -17,9 +17,11 @@ interface ImageCardProps {
   image: ImageItem
   onDelete: (id: string) => void
   onMoveToGrid?: (id: string) => void
+  onMoveAllToGrid?: () => void
   onMoveToSidebar?: (id: string) => void
   onMoveAllToSidebar?: () => void
   onDeleteAll?: () => void
+  onShuffle?: () => void
   hoveredImageId?: string | null
   setHoveredImageId?: (id: string | null) => void
   setHoveredContainer?: (container: ContainerType | null) => void
@@ -46,11 +48,13 @@ interface ImageCardProps {
 export function ImageCard({
   container,
   image,
-  onDelete,
   onMoveToGrid,
+  onMoveAllToGrid,
   onMoveToSidebar,
   onMoveAllToSidebar,
+  onDelete,
   onDeleteAll,
+  onShuffle,
   hoveredImageId,
   setHoveredImageId,
   setHoveredContainer,
@@ -152,15 +156,16 @@ export function ImageCard({
 
     return (
       <ImageContextMenu
+        container={container}
         onDelete={() => onDelete(image.id)}
         onMove={() =>
           isGrid
             ? onMoveToSidebar && onMoveToSidebar(image.id)
             : onMoveToGrid && onMoveToGrid(image.id)
         }
-        onMoveAll={isGrid ? onMoveAllToSidebar : undefined}
-        moveDirection={isGrid ? "toSidebar" : "toGrid"}
+        onMoveAll={isGrid ? onMoveAllToSidebar : onMoveAllToGrid}
         onDeleteAll={onDeleteAll}
+        onShuffle={onShuffle}
       >
         <motion.div
           {...commonProps}

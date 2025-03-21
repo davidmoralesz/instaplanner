@@ -192,8 +192,11 @@ export default function GalleryPage() {
                       <SidebarContent
                         images={sidebarImages}
                         onDelete={(id) => handleDeleteImage(id, "sidebar")}
+                        onDeleteAll={() => setClearDialogOpen(true)}
                         onMoveToGrid={onMoveToGrid}
+                        onMoveAllToGrid={onMoveAllToGrid}
                         onUpload={handleUploadClick}
+                        onShuffle={onShuffleSidebar}
                         hoveredImageId={hoveredImageId}
                         setHoveredImageId={setHoveredImageId}
                         setHoveredContainer={setHoveredContainer}
@@ -293,9 +296,9 @@ export default function GalleryPage() {
                 onOpenChange={setMobileSheetOpen}
                 images={sidebarImages}
                 onDelete={(id) => handleDeleteImage(id, "sidebar")}
-                onClearAll={() => setClearDialogOpen(true)}
+                onDeleteAll={() => setClearDialogOpen(true)}
                 onMoveAllToGrid={onMoveAllToGrid}
-                onShuffleSidebar={onShuffleSidebar}
+                onShuffle={onShuffleSidebar}
                 onMoveToGrid={onMoveToGrid}
               />
 

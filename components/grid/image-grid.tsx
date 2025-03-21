@@ -77,11 +77,7 @@ export function ImageGrid({
   if (images.length === 0) {
     return (
       <div ref={setDroppableRef} className="transition-all duration-300">
-        <ImageContextMenu
-          moveDirection="toSidebar"
-          isEmpty={true}
-          onUpload={onUpload}
-        >
+        <ImageContextMenu isEmpty={true} onUpload={onUpload}>
           <div className="h-[calc(100vh-117px)] w-full pt-4">
             <div
               className={`mx-auto flex size-full max-w-3xl flex-col items-center
@@ -112,9 +108,9 @@ export function ImageGrid({
                 key={image.id}
                 container="grid"
                 image={image}
-                onDelete={onDelete}
                 onMoveToSidebar={onMoveToSidebar}
                 onMoveAllToSidebar={onMoveAllToSidebar}
+                onDelete={onDelete}
                 onDeleteAll={onDeleteAll}
                 hoveredImageId={hoveredImageId}
                 setHoveredImageId={setHoveredImageId}
