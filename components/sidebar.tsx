@@ -1,59 +1,190 @@
 "use client"
 
-import type { ImageItem } from "@/types"
+import type { ContainerType, ImageItem } from "@/types"
 import type React from "react"
 
-import { GhostPlaceholder } from "@/components/ghost-placeholder"
 import { ImageContextMenu } from "@/components/image-context-menu"
 import { Button } from "@/components/ui/button"
-import { useSwapAnimation } from "@/hooks/use-swap-animation"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { useDroppable } from "@dnd-kit/core"
-import { useSortable } from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
-import { motion } from "framer-motion"
-import { ArrowRight, ImageUp, Trash } from "lucide-react"
-import Image from "next/image"
+import { SortableContext } from "@dnd-kit/sortable"
+import { AnimatePresence } from "framer-motion"
+import {
+  ChevronDown,
+  ImageUp,
+  MoveRight,
+  Shuffle,
+  Trash2 as Trash,
+} from "lucide-react"
+import { ImageCard } from "./grid/image-card"
 
-interface SidebarProps {
+interface SidebarSheetProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  images: ImageItem[]
+  onDelete: (id: string) => void
+  onClearAll: () => void
+  onMoveAllToGrid: () => void
+  onShuffleSidebar: () => void
+  onMoveToGrid?: (id: string) => void
+  hoveredImageId?: string | null
+  setHoveredImageId?: (id: string | null) => void
+  setHoveredContainer?: (container: ContainerType | null) => void
+  shouldSlide?: boolean
+}
+
+/**
+ * SidebarSheet component that displays a slide-up sidebar with images.
+ * It provides functionalities for shuffling, moving all images to the grid, and clearing all images.
+ * @param open - A boolean that controls the open state of the sidebar sheet
+ * @param onOpenChange - A function to toggle the open state of the sidebar sheet
+ * @param images - An array of image objects to display in the sidebar
+ * @param onDelete - Callback function to delete an image
+ * @param onClearAll - Callback function to clear all images in the sidebar
+ * @param onMoveAllToGrid - Callback function to move all images to the grid
+ * @param onShuffleSidebar - Callback function to shuffle images in the sidebar
+ * @param onMoveToGrid - Callback function to move an image to the grid
+ * @param hoveredImageId - The ID of the currently hovered image
+ * @param setHoveredImageId - Function to set the hovered image ID
+ * @param setHoveredContainer - Function to set the hovered container (in this case, "sidebar")
+ * @param shouldSlide - A boolean to determine if the sliding effect should be applied (defaults to false)
+ * @returns A slide-up sidebar component with image management functionalities, including shuffle, move, and delete actions.
+ */
+export function SidebarSheet({
+  open,
+  onOpenChange,
+  images,
+  onDelete,
+  onClearAll,
+  onMoveAllToGrid,
+  onShuffleSidebar,
+  onMoveToGrid,
+  hoveredImageId,
+  setHoveredImageId,
+  setHoveredContainer,
+  shouldSlide = false,
+}: SidebarSheetProps) {
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="bottom"
+        className="h-[85vh] rounded-t-xl border-t border-foreground/10 bg-background p-0"
+        closeClassName="absolute right-4 top-4 text-foreground/50 hover:text-foreground"
+      >
+        <div className="flex h-full flex-col">
+          {/* Handle bar for dragging */}
+          <div className="flex justify-center pb-2 pt-3">
+            <div className="h-1 w-12 rounded-full bg-foreground/20" />
+          </div>
+
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-foreground/10 px-4 py-2">
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-medium text-foreground">
+                New Images
+              </h2>
+              <span className="text-sm text-foreground/50">
+                {images.length}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onShuffleSidebar}
+                title="Shuffle images"
+                className="text-foreground/50 hover:text-foreground"
+                disabled={images.length <= 1}
+              >
+                <Shuffle className="size-4" />
+                <span className="sr-only">Shuffle</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onMoveAllToGrid}
+                title="Move all to grid"
+                className="text-foreground/50 hover:text-foreground"
+                disabled={images.length === 0}
+              >
+                <MoveRight className="size-4" />
+                <span className="sr-only">Move all to grid</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClearAll}
+                className="text-foreground/50 hover:text-foreground"
+              >
+                <Trash className="size-4" />
+                <span className="sr-only">Clear</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Content */}
+          <SidebarContent
+            images={images}
+            onDelete={onDelete}
+            onMoveToGrid={onMoveToGrid}
+            hoveredImageId={hoveredImageId}
+            setHoveredImageId={setHoveredImageId}
+            setHoveredContainer={setHoveredContainer}
+            shouldSlide={shouldSlide}
+          />
+
+          {/* Close button at bottom */}
+          <div className="border-t border-foreground/10 p-4">
+            <Button
+              variant="ghost"
+              className="flex w-full items-center justify-center gap-2 text-foreground/50 hover:text-foreground"
+              onClick={() => onOpenChange(false)}
+            >
+              Close
+              <ChevronDown className="size-4" />
+            </Button>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+interface SidebarContentProps {
   images: ImageItem[]
   onDelete: (id: string) => void
   onMoveToGrid?: (id: string) => void
-  onMoveAllToGrid?: () => void
-  onDeleteAll?: () => void
-  onShuffle?: () => void
   onUpload?: () => void
   hoveredImageId?: string | null
   setHoveredImageId?: (id: string | null) => void
-  setHoveredContainer?: (container: "grid" | "sidebar" | null) => void
+  setHoveredContainer?: (container: ContainerType | null) => void
   shouldSlide?: boolean
 }
 
-interface SidebarItemProps {
-  image: ImageItem
-  onDelete: (id: string) => void
-  onMoveToGrid?: (id: string) => void
-  onMoveAllToGrid?: () => void
-  onDeleteAll?: () => void
-  onShuffle?: () => void
-  hoveredImageId?: string | null
-  setHoveredImageId?: (id: string | null) => void
-  setHoveredContainer?: (container: "grid" | "sidebar" | null) => void
-  shouldSlide?: boolean
-}
-
-export function Sidebar({
+/**
+ * SidebarContent component that displays images in the sidebar.
+ * It handles showing a droppable area when there are no images and displays a grid of images when there are items.
+ * It also manages image deletion, movement, and uploading.
+ * @param images - An array of image objects to be displayed in the sidebar
+ * @param onDelete - Callback function to delete an image
+ * @param onMoveToGrid - Callback function to move an image to the grid
+ * @param onUpload - Callback function to upload images when the sidebar is empty
+ * @param hoveredImageId - The ID of the currently hovered image in the sidebar
+ * @param setHoveredImageId - Function to set the hovered image ID
+ * @param setHoveredContainer - Function to set the hovered container (in this case, "sidebar")
+ * @param shouldSlide - Boolean to determine whether the sliding effect is enabled (defaults to false)
+ * @returns A sidebar that displays images with drag-and-drop functionality, and an empty area with upload functionality when no images are present.
+ */
+export function SidebarContent({
   images,
   onDelete,
   onMoveToGrid,
-  onMoveAllToGrid,
-  onDeleteAll,
-  onShuffle,
   onUpload,
   hoveredImageId,
   setHoveredImageId,
   setHoveredContainer,
   shouldSlide = false,
-}: SidebarProps) {
+}: SidebarContentProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: "sidebar",
   })
@@ -63,7 +194,7 @@ export function Sidebar({
       {images.length === 0 ? (
         <div
           ref={setNodeRef}
-          className="h-full flex-1 overflow-y-auto p-3 transition-all duration-300"
+          className="h-[calc(100vh-109px)] flex-1 overflow-y-auto p-3 transition-all"
         >
           <ImageContextMenu
             moveDirection="toGrid"
@@ -71,7 +202,9 @@ export function Sidebar({
             onUpload={onUpload}
           >
             <div
-              className={`flex h-full flex-col items-center justify-center gap-3 rounded-md border border-foreground/5 ${isOver ? "bg-foreground/10" : "bg-foreground/5"}`}
+              className={`flex h-full flex-col items-center justify-center gap-3 rounded-md border border-foreground/5 ${
+                isOver ? "bg-foreground/10" : "bg-foreground/5"
+              }`}
             >
               <ImageUp className="size-5 text-foreground opacity-40" />
               <p className="text-foreground/40">Drop images here</p>
@@ -81,153 +214,31 @@ export function Sidebar({
       ) : (
         <div
           ref={setNodeRef}
-          className={`h-full flex-1 overflow-y-auto p-3 transition-all duration-300 ${isOver ? "bg-foreground/10 bg-gradient-to-t from-background" : ""}`}
+          className={`h-full flex-1 overflow-y-auto p-3 transition-all ${
+            isOver ? "bg-foreground/10 bg-gradient-to-t from-background" : ""
+          }`}
         >
-          <div className="grid grid-cols-3 gap-[2px]">
-            {images.map((image) => (
-              <SidebarItem
-                key={image.id}
-                image={image}
-                onDelete={onDelete}
-                onMoveToGrid={onMoveToGrid}
-                onMoveAllToGrid={onMoveAllToGrid}
-                onDeleteAll={onDeleteAll}
-                onShuffle={onShuffle}
-                hoveredImageId={hoveredImageId}
-                setHoveredImageId={setHoveredImageId}
-                setHoveredContainer={setHoveredContainer}
-                shouldSlide={shouldSlide}
-              />
-            ))}
-          </div>
+          <SortableContext items={images.map((img) => img.id)}>
+            <AnimatePresence>
+              <div className="grid grid-cols-3 gap-[2px]">
+                {images.map((image) => (
+                  <ImageCard
+                    key={image.id}
+                    container="sidebar"
+                    image={image}
+                    onDelete={onDelete}
+                    onMoveToGrid={onMoveToGrid}
+                    hoveredImageId={hoveredImageId}
+                    setHoveredImageId={setHoveredImageId}
+                    setHoveredContainer={setHoveredContainer}
+                    shouldSlide={shouldSlide}
+                  />
+                ))}
+              </div>
+            </AnimatePresence>
+          </SortableContext>
         </div>
       )}
     </>
-  )
-}
-
-function SidebarItem({
-  image,
-  onDelete,
-  onMoveToGrid,
-  hoveredImageId,
-  setHoveredImageId,
-  setHoveredContainer,
-  onMoveAllToGrid,
-  onDeleteAll,
-  onShuffle,
-  shouldSlide = false,
-}: SidebarItemProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-    isOver,
-  } = useSortable({
-    id: image.id,
-    data: image,
-  })
-
-  const { getSwapAnimationStyles } = useSwapAnimation()
-
-  const swapAnimationStyles = getSwapAnimationStyles(image.id)
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition: transition || undefined,
-    zIndex: isDragging ? 1 : swapAnimationStyles.zIndex || "auto",
-    ...swapAnimationStyles,
-  }
-
-  const handleMoveToGrid = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (onMoveToGrid) onMoveToGrid(image.id)
-  }
-
-  const handleMouseEnter = () => {
-    setHoveredImageId?.(image.id)
-    setHoveredContainer?.("sidebar")
-  }
-
-  const handleMouseLeave = () => {
-    setHoveredImageId?.(null)
-    setHoveredContainer?.(null)
-  }
-
-  return (
-    <ImageContextMenu
-      onDelete={() => onDelete(image.id)}
-      onMove={() => onMoveToGrid && onMoveToGrid(image.id)}
-      onMoveAll={() => onMoveAllToGrid && onMoveAllToGrid()}
-      onDeleteAll={() => onDeleteAll && onDeleteAll()}
-      onShuffle={onShuffle}
-      moveDirection="toGrid"
-    >
-      <motion.div
-        ref={setNodeRef}
-        style={style}
-        id={`image-${image.id}`}
-        className={`group relative cursor-move overflow-hidden bg-background transition-all
-          duration-200 ${isDragging ? "opacity-0" : ""}`}
-        {...attributes}
-        {...listeners}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.8 }}
-        whileHover={{ scale: 1.02 }}
-        transition={{
-          type: "tween",
-          damping: 20,
-          stiffness: 300,
-        }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <GhostPlaceholder
-          isVisible={isOver}
-          className="z-10"
-          isSwap={isOver && !isDragging && hoveredImageId !== image.id}
-          isSlideMode={shouldSlide}
-        />
-
-        <div className="relative pb-[125%]">
-          <Image
-            src={image.data || ""}
-            alt="Gallery item"
-            className={`absolute inset-0 size-full object-cover transition-transform duration-200 ${isOver ? "scale-95 opacity-50" : ""}`}
-            draggable={false}
-            fill={true}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-1 top-1 text-white opacity-0 transition-all duration-200 hover:text-white/70 group-hover:opacity-100"
-              onClick={(e) => {
-                e.stopPropagation()
-                onDelete(image.id)
-              }}
-            >
-              <Trash className="size-3" />
-              <span className="sr-only">Delete</span>
-            </Button>
-            {onMoveToGrid && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute left-1 top-1 text-white opacity-0 transition-all duration-200 hover:text-white/70 group-hover:opacity-100"
-                onClick={handleMoveToGrid}
-              >
-                <ArrowRight className="size-3" />
-                <span className="sr-only">Move to Grid</span>
-              </Button>
-            )}
-          </div>
-        </div>
-      </motion.div>
-    </ImageContextMenu>
   )
 }
