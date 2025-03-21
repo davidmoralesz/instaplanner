@@ -7,12 +7,20 @@ import { motion } from "framer-motion"
 import { ImageUp } from "lucide-react"
 import type React from "react"
 import { useCallback, useRef, useState } from "react"
+import { MAX_FILE_SIZE, MAX_FILES_TO_PROCESS } from "@/config/constants"
+import { fadeAnimation } from "@/lib/dnd/animation"
 
 interface DropZoneProps {
   children: React.ReactNode
   onDrop: (images: ImageItem[]) => void
 }
 
+/**
+ * DropZone component that handles drag-and-drop image file uploads.
+ * @param children - The content inside the drop zone
+ * @param onDrop - Callback function triggered when valid images are dropped
+ * @returns A div element representing the drop zone with drag and drop functionality.
+ */
 export function DropZone({ children, onDrop }: DropZoneProps) {
   const [isDragging, setIsDragging] = useState(false)
   const dragCounter = useRef(0)
@@ -58,8 +66,6 @@ export function DropZone({ children, onDrop }: DropZoneProps) {
         return
       }
 
-      // Limit the number of files to process at once to prevent browser freezing
-      const MAX_FILES_TO_PROCESS = 20
       if (imageFiles.length > MAX_FILES_TO_PROCESS) {
         toast({
           variant: "destructive",
@@ -72,8 +78,6 @@ export function DropZone({ children, onDrop }: DropZoneProps) {
       const processImages = imageFiles.map(
         (file) =>
           new Promise<ImageItem>((resolve, reject) => {
-            // Check file size
-            const MAX_FILE_SIZE = 10 * 1024 * 1024 // 10MB
             if (file.size > MAX_FILE_SIZE) {
               reject(
                 new AppError(
@@ -142,25 +146,13 @@ export function DropZone({ children, onDrop }: DropZoneProps) {
     >
       {isDragging && (
         <motion.div
+          {...fadeAnimation}
           className="fixed inset-0 z-50 h-screen bg-background/90 backdrop-blur-sm"
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={{
-            type: "tween",
-            damping: 20,
-            stiffness: 300,
-          }}
         >
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="absolute inset-10 z-50 flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-foreground/20 bg-foreground/5 backdrop-blur-sm"
-          >
+          <div className="absolute inset-10 z-50 flex flex-col items-center justify-center gap-3 rounded-md border border-dashed border-foreground/20 bg-foreground/5 backdrop-blur-sm">
             <ImageUp className="size-10 opacity-40" strokeWidth={1} />
             <p className="font-medium text-foreground/40">Drop images here</p>
-          </motion.div>
+          </div>
         </motion.div>
       )}
       {children}

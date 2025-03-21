@@ -1,31 +1,8 @@
 "use client"
 
-import { ClearDialog } from "@/components/clear-dialog"
-import { DropZone } from "@/components/drop-zone"
-import { GlobalContextMenu } from "@/components/global-context-menu"
-import { ImageGrid } from "@/components/image-grid"
-import { ImageUploader } from "@/components/image-uploader"
-import { InstructionsDialog } from "@/components/instructions-dialog"
-import { MobileGallery } from "@/components/mobile-gallery"
-import { MobileMaintenanceDialog } from "@/components/mobile-maintenance-dialog"
-import { MobilePreviewDialog } from "@/components/mobile-preview-dialog"
-import { Sidebar } from "@/components/sidebar"
-import { Button } from "@/components/ui/button"
-import { useDragAndDrop } from "@/hooks/use-drag-and-drop"
-import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation"
-import { usePageHandlers } from "@/hooks/use-page-handlers"
-import {
-  DndContext,
-  DragOverlay,
-  PointerSensor,
-  pointerWithin,
-  rectIntersection,
-  useSensor,
-  useSensors,
-  defaultDropAnimationSideEffects,
-} from "@dnd-kit/core"
-import { SortableContext } from "@dnd-kit/sortable"
-import { AnimatePresence, motion } from "framer-motion"
+import { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
+import { AnimatePresence } from "framer-motion"
 import {
   ArrowLeft,
   ArrowRight,
@@ -34,10 +11,27 @@ import {
   Smartphone,
   Trash,
 } from "lucide-react"
-import Image from "next/image"
-import { useEffect, useState } from "react"
-import dynamic from "next/dynamic"
+import { SortableContext } from "@dnd-kit/sortable"
 
+// Components
+import { ClearDialog } from "@/components/dialogs/clear-dialog"
+import { DropZone } from "@/components/drop-zone"
+import { GlobalContextMenu } from "@/components/global-context-menu"
+import { ImageGrid } from "@/components/grid/image-grid"
+import { InstructionsDialog } from "@/components/dialogs/instructions-dialog"
+import { SidebarSheet, SidebarContent } from "@/components/sidebar"
+import { MaintenanceDialog } from "@/components/dialogs/maintenance-dialog"
+import { PreviewDialog } from "@/components/dialogs/preview-dialog"
+import { Button } from "@/components/ui/button"
+import { DndProvider } from "@/components/dnd/dnd-provider"
+import { ImageUploader } from "@/components/image-uploader"
+import { Footer } from "@/components/footer"
+
+// Hooks
+import { usePageHandlers } from "@/hooks/use-page-handlers"
+import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation"
+
+// Load ThemeProvider dynamically to avoid SSR issues
 const ThemeProviderNoSSR = dynamic(
   () => import("@/components/ui/theme-provider").then((m) => m.ThemeProvider),
   {
@@ -45,11 +39,17 @@ const ThemeProviderNoSSR = dynamic(
   }
 )
 
+/**
+ * Page component for the InstaPlanner gallery.
+ * Manages state and handlers for image organization, drag-and-drop functionality,
+ * keyboard navigation, and UI interactions across different components.
+ * @returns The gallery page layout with grid and sidebar image management.
+ */
 export default function GalleryPage() {
   const {
     // State
-    mobileGalleryOpen,
-    setMobileGalleryOpen,
+    mobileSheetOpen,
+    setMobileSheetOpen,
     clearDialogOpen,
     setClearDialogOpen,
     instructionsOpen,
@@ -62,14 +62,14 @@ export default function GalleryPage() {
     gridImages,
     sidebarImages,
     isLoading,
-    addImages,
-    moveImageToGrid,
-    moveImageToSidebar,
-    moveAllToGrid,
-    moveAllToSidebar,
-    shuffleSidebarImages,
-    updateImageOrder,
-    swapImages,
+    onAddImages,
+    onMoveToGrid,
+    onMoveToSidebar,
+    onMoveAllToGrid,
+    onMoveAllToSidebar,
+    onShuffleSidebar,
+    onUpdateImageOrder,
+    onSwapImages,
 
     // Handlers
     handleDeleteImage,
@@ -87,10 +87,10 @@ export default function GalleryPage() {
 
   const { hoveredImageId, setHoveredImageId, setHoveredContainer } =
     useKeyboardNavigation({
-      onMoveToGrid: moveImageToGrid,
-      onMoveToSidebar: moveImageToSidebar,
-      onMoveAllToGrid: moveAllToGrid,
-      onMoveAllToSidebar: moveAllToSidebar,
+      onMoveToGrid: onMoveToGrid,
+      onMoveToSidebar: onMoveToSidebar,
+      onMoveAllToGrid: onMoveAllToGrid,
+      onMoveAllToSidebar: onMoveAllToSidebar,
       onDelete: handleDeleteImage,
       onUndo: handleUndo,
       onRedo: handleRedo,
@@ -100,6 +100,11 @@ export default function GalleryPage() {
 
   const [shouldSlide, setShouldSlide] = useState(false)
 
+  /**
+   * Tracks the shift key state to enable/disable sliding functionality.
+   * Sets up event listeners for keydown and keyup events on the window.
+   * Cleans up event listeners on component unmount.
+   */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Shift") {
@@ -122,69 +127,20 @@ export default function GalleryPage() {
     }
   }, [])
 
-  const { handleDragStart, handleDragEnd, getActiveImage, isSwapAnimating } =
-    useDragAndDrop({
-      gridImages,
-      sidebarImages,
-      moveImageToGrid,
-      moveImageToSidebar,
-      updateImageOrder,
-      swapImages,
-      shouldSlide,
-    })
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 4,
-      },
-    })
-  )
-
-  const activeImage = getActiveImage()
-
-  const dragOverlayAnimation = {
-    initial: { opacity: 0, rotate: 0 },
-    animate: {
-      opacity: isSwapAnimating ? 0 : 0.5,
-      rotate: isSwapAnimating ? 0 : Math.random() < 0.5 ? -3 : 3,
-    },
-    exit: { opacity: 0, rotate: 0 },
-    transition: {
-      type: "tween",
-      damping: 15,
-      stiffness: 300,
-    },
-  }
-
-  const dragDropAnimation = {
-    duration: 250,
-    easing: "ease",
-    sideEffects: defaultDropAnimationSideEffects({
-      styles: {
-        dragOverlay: {
-          transition: "all 250ms ease-out",
-          opacity: "0",
-        },
-      },
-    }),
-  }
-
   return (
     <ThemeProviderNoSSR attribute="class" defaultTheme="dark">
       <main>
-        <MobileMaintenanceDialog />
+        <MaintenanceDialog />
 
-        <DropZone onDrop={addImages}>
-          <DndContext
-            sensors={sensors}
-            collisionDetection={(args) => {
-              const pointerCollisions = pointerWithin(args)
-              const rectCollisions = rectIntersection(args)
-              return [...pointerCollisions, ...rectCollisions]
-            }}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
+        <DropZone onDrop={onAddImages}>
+          <DndProvider
+            gridImages={gridImages}
+            sidebarImages={sidebarImages}
+            onMoveToGrid={onMoveToGrid}
+            onMoveToSidebar={onMoveToSidebar}
+            onUpdateImageOrder={onUpdateImageOrder}
+            onSwapImages={onSwapImages}
+            shouldSlide={shouldSlide}
           >
             <div className="flex min-h-screen flex-col md:flex-row">
               {/* Desktop Sidebar - Hidden on mobile */}
@@ -194,7 +150,7 @@ export default function GalleryPage() {
                     <h1 className="text-lg font-medium">InstaPlanner</h1>
                     <div className="h-4 w-px bg-foreground/10" />
                     <ImageUploader
-                      onUpload={addImages}
+                      onUpload={onAddImages}
                       ref={imageUploaderRef}
                     />
                   </div>
@@ -202,7 +158,7 @@ export default function GalleryPage() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={shuffleSidebarImages}
+                      onClick={onShuffleSidebar}
                       title="Shuffle sidebar images"
                       disabled={sidebarImages.length <= 1}
                     >
@@ -212,7 +168,7 @@ export default function GalleryPage() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={moveAllToGrid}
+                      onClick={onMoveAllToGrid}
                       title="Move all to grid"
                       disabled={sidebarImages.length === 0}
                     >
@@ -230,17 +186,17 @@ export default function GalleryPage() {
                   </div>
                 </div>
 
-                <div className="h-[calc(100vh-64px)] overflow-y-auto">
+                <div className="h-screen overflow-y-auto">
                   <SortableContext items={sidebarImages.map((img) => img.id)}>
                     <AnimatePresence>
-                      <Sidebar
+                      <SidebarContent
                         images={sidebarImages}
                         onDelete={(id) => handleDeleteImage(id, "sidebar")}
-                        onMoveToGrid={moveImageToGrid}
-                        onMoveAllToGrid={moveAllToGrid}
                         onDeleteAll={() => setClearDialogOpen(true)}
-                        onShuffle={shuffleSidebarImages}
+                        onMoveToGrid={onMoveToGrid}
+                        onMoveAllToGrid={onMoveAllToGrid}
                         onUpload={handleUploadClick}
+                        onShuffle={onShuffleSidebar}
                         hoveredImageId={hoveredImageId}
                         setHoveredImageId={setHoveredImageId}
                         setHoveredContainer={setHoveredContainer}
@@ -257,7 +213,7 @@ export default function GalleryPage() {
                   <h1 className="text-lg font-medium">InstaPlanner</h1>
                   <div className="flex items-center gap-2">
                     <ImageUploader
-                      onUpload={addImages}
+                      onUpload={onAddImages}
                       ref={imageUploaderRef}
                     />
                     <Button
@@ -271,7 +227,7 @@ export default function GalleryPage() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => setMobileGalleryOpen(true)}
+                      onClick={() => setMobileSheetOpen(true)}
                     >
                       <Menu className="size-4" />
                       <span className="sr-only">Open Gallery</span>
@@ -284,8 +240,8 @@ export default function GalleryPage() {
               <GlobalContextMenu
                 onShowInstructions={() => setInstructionsOpen(true)}
               >
-                <div className="flex-1 overflow-auto md:ml-80">
-                  <div className="w-full p-4 md:p-6">
+                <div className="h-screen flex-1 overflow-auto md:ml-80">
+                  <div className="w-full px-4 pb-0 pt-4 md:px-6 md:pt-6">
                     <div className="mx-auto mb-1 flex max-w-3xl items-center justify-between px-5">
                       <h2 className="mr-3 text-lg font-medium">Grid</h2>
                       <div className="h-4 w-px bg-foreground/10" />
@@ -301,7 +257,7 @@ export default function GalleryPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={moveAllToSidebar}
+                        onClick={onMoveAllToSidebar}
                         className="flex items-center gap-1 text-foreground/70 hover:text-foreground"
                         disabled={gridImages.length === 0}
                       >
@@ -320,8 +276,8 @@ export default function GalleryPage() {
                         <ImageGrid
                           images={gridImages}
                           onDelete={(id) => handleDeleteImage(id, "grid")}
-                          onMoveToSidebar={moveImageToSidebar}
-                          onMoveAllToSidebar={moveAllToSidebar}
+                          onMoveToSidebar={onMoveToSidebar}
+                          onMoveAllToSidebar={onMoveAllToSidebar}
                           onDeleteAll={() => setClearDialogOpen(true)}
                           onUpload={handleUploadClick}
                           isLoading={isLoading}
@@ -335,15 +291,15 @@ export default function GalleryPage() {
                   </div>
                 </div>
               </GlobalContextMenu>
-              <MobileGallery
-                open={mobileGalleryOpen}
-                onOpenChange={setMobileGalleryOpen}
+              <SidebarSheet
+                open={mobileSheetOpen}
+                onOpenChange={setMobileSheetOpen}
                 images={sidebarImages}
                 onDelete={(id) => handleDeleteImage(id, "sidebar")}
-                onClearAll={() => setClearDialogOpen(true)}
-                onMoveAllToGrid={moveAllToGrid}
-                onShuffleSidebar={shuffleSidebarImages}
-                onMoveToGrid={moveImageToGrid}
+                onDeleteAll={() => setClearDialogOpen(true)}
+                onMoveAllToGrid={onMoveAllToGrid}
+                onShuffle={onShuffleSidebar}
+                onMoveToGrid={onMoveToGrid}
               />
 
               <ClearDialog
@@ -355,33 +311,12 @@ export default function GalleryPage() {
                 sidebarCount={sidebarImages.length}
                 gridCount={gridImages.length}
               />
-
-              <DragOverlay dropAnimation={dragDropAnimation}>
-                {activeImage ? (
-                  <motion.div
-                    {...dragOverlayAnimation}
-                    className="relative aspect-[4/5] w-full overflow-hidden"
-                    style={{
-                      filter: "drop-shadow(0 25px 25px rgb(0 0 0 / 0.15))",
-                      pointerEvents: "none",
-                    }}
-                  >
-                    <Image
-                      src={activeImage.data || ""}
-                      alt="Dragging"
-                      className="size-full object-cover"
-                      fill={true}
-                      priority
-                    />
-                    <div className="absolute inset-0 ring-2 ring-foreground/20" />
-                  </motion.div>
-                ) : null}
-              </DragOverlay>
             </div>
-          </DndContext>
+            <Footer />
+          </DndProvider>
         </DropZone>
 
-        <MobilePreviewDialog
+        <PreviewDialog
           open={previewOpen}
           onOpenChange={setPreviewOpen}
           images={gridImages}

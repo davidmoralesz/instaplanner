@@ -11,12 +11,34 @@ import {
   updatePositions,
 } from "@/lib/storage"
 import { swapArrayElements } from "@/lib/utils"
-import type { ImageItem } from "@/types"
+import type { ContainerType, ImageItem } from "@/types"
 import { arrayMove } from "@dnd-kit/sortable"
 import { useCallback, useEffect, useState } from "react"
+import { MAX_IMAGES } from "@/config/constants"
 
-const MAX_IMAGES = 100
-
+/**
+ * Custom hook for managing image operations such as loading, adding, deleting, moving, shuffling, and clearing images.
+ * It maintains the state of grid and sidebar images and handles error notifications.
+ * @returns An object with the following properties:
+ * @property gridImages - State for images in the grid container
+ * @property sidebarImages - State for images in the sidebar container
+ * @property isLoading - Indicates if images are currently being loaded
+ * @property onLoadImages - Loads images from storage with error handling
+ * @property onAddImages - Adds new images to the sidebar after compression
+ * @property onDeleteImageById - Deletes an image from the grid or sidebar
+ * @property onMoveToGrid - Moves an image from the sidebar to the grid
+ * @property onMoveToSidebar - Moves an image from the grid to the sidebar
+ * @property onMoveAllToGrid - Moves all images from the sidebar to the grid
+ * @property onMoveAllToSidebar - Moves all images from the grid to the sidebar
+ * @property onShuffleSidebar - Shuffles the images in the sidebar randomly
+ * @property onClearAll - Clears all images from both the grid and sidebar
+ * @property onClearSidebar - Clears all images from the sidebar
+ * @property onClearGrid - Clears all images from the grid
+ * @property onUpdateImageOrder - Updates the order of images within the grid or sidebar
+ * @property onUpdateGridImages - Updates the images in the grid
+ * @property onUpdateSidebarImages - Updates the images in the sidebar
+ * @property onSwapImages - Swaps two images between the grid and sidebar or within the same container
+ */
 export function useImageManagement() {
   const [gridImages, setGridImages] = useState<ImageItem[]>([])
   const [sidebarImages, setSidebarImages] = useState<ImageItem[]>([])
@@ -39,7 +61,7 @@ export function useImageManagement() {
     [toast]
   )
 
-  const loadImagesWithErrorHandling = useCallback(async () => {
+  const onLoadImages = useCallback(async () => {
     try {
       setIsLoading(true)
       const { gridImages, sidebarImages } = await loadImages()
@@ -62,10 +84,10 @@ export function useImageManagement() {
 
   // Load images on mount
   useEffect(() => {
-    loadImagesWithErrorHandling()
-  }, [loadImagesWithErrorHandling])
+    onLoadImages()
+  }, [onLoadImages])
 
-  const addImages = useCallback(
+  const onAddImages = useCallback(
     async (newImages: ImageItem[]) => {
       if (sidebarImages.length + newImages.length > MAX_IMAGES) {
         toast({
@@ -106,8 +128,8 @@ export function useImageManagement() {
     [sidebarImages.length, toast, handleError]
   )
 
-  const deleteImageById = useCallback(
-    async (id: string, container: "grid" | "sidebar") => {
+  const onDeleteImageById = useCallback(
+    async (id: string, container: ContainerType) => {
       try {
         await deleteImage(id)
         if (container === "grid") {
@@ -134,7 +156,7 @@ export function useImageManagement() {
     [toast, handleError]
   )
 
-  const moveImageToGrid = useCallback(
+  const onMoveToGrid = useCallback(
     async (id: string) => {
       try {
         const imageToMove = sidebarImages.find((img) => img.id === id)
@@ -151,11 +173,6 @@ export function useImageManagement() {
           saveImages(updated, "grid").catch(handleError)
           return updated
         })
-
-        toast({
-          title: "Image moved",
-          description: "Image has been moved to grid.",
-        })
       } catch (error) {
         handleError(error)
       }
@@ -163,7 +180,7 @@ export function useImageManagement() {
     [sidebarImages, toast, handleError]
   )
 
-  const moveImageToSidebar = useCallback(
+  const onMoveToSidebar = useCallback(
     async (id: string) => {
       try {
         const imageToMove = gridImages.find((img) => img.id === id)
@@ -180,11 +197,6 @@ export function useImageManagement() {
           saveImages(updated, "sidebar").catch(handleError)
           return updated
         })
-
-        toast({
-          title: "Image moved",
-          description: "Image has been moved to sidebar.",
-        })
       } catch (error) {
         handleError(error)
       }
@@ -192,7 +204,7 @@ export function useImageManagement() {
     [gridImages, toast, handleError]
   )
 
-  const moveAllToGrid = useCallback(async () => {
+  const onMoveAllToGrid = useCallback(async () => {
     if (sidebarImages.length === 0) {
       toast({
         title: "No images to move",
@@ -220,7 +232,7 @@ export function useImageManagement() {
     }
   }, [sidebarImages, toast, handleError])
 
-  const moveAllToSidebar = useCallback(async () => {
+  const onMoveAllToSidebar = useCallback(async () => {
     if (gridImages.length === 0) {
       toast({
         title: "No images to move",
@@ -248,7 +260,7 @@ export function useImageManagement() {
     }
   }, [gridImages, toast, handleError])
 
-  const shuffleSidebarImages = useCallback(async () => {
+  const onShuffleSidebar = useCallback(async () => {
     if (sidebarImages.length <= 1) {
       toast({
         title: "Cannot shuffle",
@@ -278,7 +290,7 @@ export function useImageManagement() {
     }
   }, [sidebarImages, toast, handleError])
 
-  const clearAll = useCallback(async () => {
+  const onClearAll = useCallback(async () => {
     try {
       const totalCount = gridImages.length + sidebarImages.length
       await clearAllImages()
@@ -293,7 +305,7 @@ export function useImageManagement() {
     }
   }, [gridImages.length, sidebarImages.length, toast, handleError])
 
-  const clearSidebar = useCallback(async () => {
+  const onClearSidebar = useCallback(async () => {
     try {
       const count = sidebarImages.length
       await Promise.all(sidebarImages.map((img) => deleteImage(img.id)))
@@ -308,7 +320,7 @@ export function useImageManagement() {
     }
   }, [sidebarImages, toast, handleError])
 
-  const clearGrid = useCallback(async () => {
+  const onClearGrid = useCallback(async () => {
     try {
       const count = gridImages.length
       await Promise.all(gridImages.map((img) => deleteImage(img.id)))
@@ -323,9 +335,9 @@ export function useImageManagement() {
     }
   }, [gridImages, toast, handleError])
 
-  const updateImageOrder = useCallback(
+  const onUpdateImageOrder = useCallback(
     async (
-      container: "grid" | "sidebar",
+      container: ContainerType,
       oldIndex: number,
       newIndex: number,
       shouldSlide: boolean = false
@@ -357,7 +369,7 @@ export function useImageManagement() {
     [handleError]
   )
 
-  const swapImages = useCallback(
+  const onSwapImages = useCallback(
     async (sourceId: string, targetId: string) => {
       try {
         // Find the source and target images
@@ -370,14 +382,14 @@ export function useImageManagement() {
         const sourceContainer = sourceInGrid ? "grid" : "sidebar"
         const targetContainer = targetInGrid ? "grid" : "sidebar"
 
-        // If source and target are in the same container, use updateImageOrder
+        // If source and target are in the same container, use onUpdateImageOrder
         if (sourceContainer === targetContainer) {
           const images = sourceContainer === "grid" ? gridImages : sidebarImages
           const sourceIndex = images.findIndex((img) => img.id === sourceId)
           const targetIndex = images.findIndex((img) => img.id === targetId)
 
           if (sourceIndex !== -1 && targetIndex !== -1) {
-            await updateImageOrder(
+            await onUpdateImageOrder(
               sourceContainer,
               sourceIndex,
               targetIndex,
@@ -405,11 +417,6 @@ export function useImageManagement() {
             saveImages(updated, "sidebar").catch(handleError)
             return updated
           })
-
-          toast({
-            title: "Images swapped",
-            description: "Images have been swapped between grid and sidebar.",
-          })
         } else if (sourceInSidebar && targetInGrid) {
           // Source is in sidebar, target is in grid
           setGridImages((prev) => {
@@ -427,20 +434,15 @@ export function useImageManagement() {
             saveImages(updated, "sidebar").catch(handleError)
             return updated
           })
-
-          toast({
-            title: "Images swapped",
-            description: "Images have been swapped between sidebar and grid.",
-          })
         }
       } catch (error) {
         handleError(error)
       }
     },
-    [gridImages, sidebarImages, updateImageOrder, toast, handleError]
+    [gridImages, sidebarImages, onUpdateImageOrder, toast, handleError]
   )
 
-  const updateGridImages = useCallback(
+  const onUpdateGridImages = useCallback(
     (images: ImageItem[]) => {
       setGridImages(images)
       saveImages(images, "grid").catch(handleError)
@@ -448,7 +450,7 @@ export function useImageManagement() {
     [handleError]
   )
 
-  const updateSidebarImages = useCallback(
+  const onUpdateSidebarImages = useCallback(
     (images: ImageItem[]) => {
       setSidebarImages(images)
       saveImages(images, "sidebar").catch(handleError)
@@ -460,20 +462,20 @@ export function useImageManagement() {
     gridImages,
     sidebarImages,
     isLoading,
-    loadImagesWithErrorHandling,
-    addImages,
-    deleteImageById,
-    moveImageToGrid,
-    moveImageToSidebar,
-    moveAllToGrid,
-    moveAllToSidebar,
-    shuffleSidebarImages,
-    clearAll,
-    clearSidebar,
-    clearGrid,
-    updateImageOrder,
-    updateGridImages,
-    updateSidebarImages,
-    swapImages,
+    onLoadImages,
+    onAddImages,
+    onDeleteImageById,
+    onMoveToGrid,
+    onMoveToSidebar,
+    onMoveAllToGrid,
+    onMoveAllToSidebar,
+    onShuffleSidebar,
+    onClearAll,
+    onClearSidebar,
+    onClearGrid,
+    onUpdateImageOrder,
+    onUpdateGridImages,
+    onUpdateSidebarImages,
+    onSwapImages,
   }
 }

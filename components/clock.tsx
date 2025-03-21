@@ -1,6 +1,10 @@
 import { getFormattedTime } from "@/lib/utils"
 import { useState, useEffect } from "react"
 
+/**
+ * Clock component that displays the current time and updates every minute.
+ * @returns A span element displaying the formatted time.
+ */
 export function Clock() {
   const [clock, setTime] = useState(getFormattedTime())
 

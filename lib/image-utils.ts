@@ -1,5 +1,17 @@
+/**
+ * Utilities for image processing
+ */
 import { AppError, ErrorCodes } from "@/lib/errors"
+import {
+  MAX_IMAGE_DIMENSION,
+  IMAGE_COMPRESSION_QUALITY,
+} from "@/config/constants"
 
+/**
+ * Compresses an image to reduce file size.
+ * @param base64String - The base64 encoded image data
+ * @returns A promise that resolves to the compressed image data.
+ */
 export async function compressImage(base64String: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image()
@@ -8,6 +20,7 @@ export async function compressImage(base64String: string): Promise<string> {
     img.onload = () => {
       const canvas = document.createElement("canvas")
       const ctx = canvas.getContext("2d")
+
       if (!ctx) {
         reject(
           new AppError(
@@ -19,26 +32,26 @@ export async function compressImage(base64String: string): Promise<string> {
       }
 
       // Calculate new dimensions while maintaining aspect ratio
-      let width = img.width
-      let height = img.height
-      const maxDimension = 1200
+      let { width, height } = img
 
-      if (width > height && width > maxDimension) {
-        height = (height * maxDimension) / width
-        width = maxDimension
-      } else if (height > maxDimension) {
-        width = (width * maxDimension) / height
-        height = maxDimension
+      if (width > height && width > MAX_IMAGE_DIMENSION) {
+        height = (height * MAX_IMAGE_DIMENSION) / width
+        width = MAX_IMAGE_DIMENSION
+      } else if (height > MAX_IMAGE_DIMENSION) {
+        width = (width * MAX_IMAGE_DIMENSION) / height
+        height = MAX_IMAGE_DIMENSION
       }
 
+      // Set canvas dimensions and draw image
       canvas.width = width
       canvas.height = height
-
-      // Draw and compress image
       ctx.drawImage(img, 0, 0, width, height)
 
       // Compress with reduced quality
-      const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7)
+      const compressedBase64 = canvas.toDataURL(
+        "image/jpeg",
+        IMAGE_COMPRESSION_QUALITY
+      )
       resolve(compressedBase64)
     }
 
@@ -49,5 +62,33 @@ export async function compressImage(base64String: string): Promise<string> {
     }
 
     img.src = base64String
+  })
+}
+
+/**
+ * Reads a file as a data URL
+ * @param file - The file to read
+ * @returns A promise that resolves to the data URL
+ */
+export function readFileAsDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+
+    reader.onload = (e) => {
+      const result = e.target?.result
+      if (typeof result === "string") {
+        resolve(result)
+      } else {
+        reject(
+          new AppError("Failed to read file", ErrorCodes.IMAGE_UPLOAD_FAILED)
+        )
+      }
+    }
+
+    reader.onerror = () => {
+      reject(new AppError("Error reading file", ErrorCodes.IMAGE_UPLOAD_FAILED))
+    }
+
+    reader.readAsDataURL(file)
   })
 }

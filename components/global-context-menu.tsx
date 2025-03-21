@@ -14,6 +14,12 @@ interface GlobalContextMenuProps {
   onShowInstructions: () => void
 }
 
+/**
+ * GlobalContextMenu component that renders a context menu with an option to show instructions.
+ * @param children - The content inside the context menu trigger that will be displayed to the user
+ * @param onShowInstructions - A function to handle the action when the "Show Instructions" menu item is clicked
+ * @returns A context menu with a trigger and an option to show instructions.
+ */
 export function GlobalContextMenu({
   children,
   onShowInstructions,

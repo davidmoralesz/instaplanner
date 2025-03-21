@@ -7,109 +7,99 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
+  ContextMenuSeparator,
 } from "@/components/ui/context-menu"
-import {
-  ArrowLeft,
-  ArrowRight,
-  Shuffle,
-  Trash2 as Trash,
-  Upload,
-} from "lucide-react"
+import { ArrowLeft, ArrowRight, Shuffle, Trash, Upload } from "lucide-react"
+import type { ContainerType } from "@/types"
 
 interface ImageContextMenuProps {
   children: React.ReactNode
-  onDelete?: () => void
+  container?: ContainerType
   onMove?: () => void
   onMoveAll?: () => void
-  onDeleteAll?: () => void
   onShuffle?: () => void
   onUpload?: () => void
-  moveDirection: "toGrid" | "toSidebar"
+  onDelete?: () => void
+  onDeleteAll?: () => void
   isEmpty?: boolean
 }
 
+/**
+ * Context menu for image items with options to move, delete, etc.
+ * @param children - The content to wrap with the context menu
+ * @param container - The container type ("grid" or "sidebar") that determines available options
+ * @param onMove - Callback for moving the image between containers
+ * @param onMoveAll - Callback for moving all images between containers
+ * @param onShuffle - Callback for shuffling images (sidebar only)
+ * @param onUpload - Callback to upload new images if the container is empty
+ * @param onDelete - Callback for deleting the image
+ * @param onDeleteAll - Callback for deleting all images
+ * @param isEmpty - Determine if the container is empty (defaults to false)
+ * @returns A context menu with options based on the container type
+ */
 export function ImageContextMenu({
   children,
-  onDelete,
+  container,
   onMove,
   onMoveAll,
-  onDeleteAll,
   onShuffle,
   onUpload,
-  moveDirection,
+  onDelete,
+  onDeleteAll,
   isEmpty = false,
 }: ImageContextMenuProps) {
-  const ArrowIcon = moveDirection === "toGrid" ? ArrowRight : ArrowLeft
-  const moveText =
-    moveDirection === "toGrid" ? "Move to Grid" : "Move to Sidebar"
-  const moveAllText =
-    moveDirection === "toGrid" ? "Move All to Grid" : "Move All to Sidebar"
+  const isGrid = container === "grid"
+  const isSidebar = container === "sidebar"
+  const ArrowIcon = isGrid ? ArrowLeft : ArrowRight
+  const moveText = isGrid ? "Move to Sidebar" : "Move to Grid"
+  const moveAllText = isGrid ? "Move All to Sidebar" : "Move All to Grid"
 
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
-      <ContextMenuContent className="border-foreground/25 text-foreground/70">
-        {isEmpty && onUpload && (
-          <ContextMenuItem
-            onClick={onUpload}
-            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
-          >
-            <Upload className="size-4" />
+      <ContextMenuContent className="w-48">
+        {isEmpty && (
+          <ContextMenuItem onClick={onUpload}>
+            <Upload className="mr-2 size-4" />
             <span>Upload Images</span>
           </ContextMenuItem>
         )}
 
-        {!isEmpty && onDelete && (
-          <ContextMenuItem
-            onClick={onDelete}
-            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
-          >
-            <Trash className="size-4" />
-            <span>Delete</span>
-          </ContextMenuItem>
-        )}
+        {!isEmpty && (
+          <>
+            <ContextMenuItem onClick={onMove}>
+              <ArrowIcon className="mr-2 size-4" />
+              {moveText}
+            </ContextMenuItem>
+            {onMoveAll && (
+              <ContextMenuItem onClick={onMoveAll}>
+                <ArrowIcon className="mr-2 size-4" />
+                {moveAllText}
+              </ContextMenuItem>
+            )}
 
-        {!isEmpty && onMove && (
-          <ContextMenuItem
-            onClick={onMove}
-            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
-          >
-            <ArrowIcon className="size-4" />
-            <span>{moveText}</span>
-          </ContextMenuItem>
-        )}
+            <ContextMenuSeparator />
+            <ContextMenuItem onClick={onDelete}>
+              <Trash className="mr-2 size-4" />
+              Delete
+            </ContextMenuItem>
+            {onDeleteAll && (
+              <ContextMenuItem onClick={onDeleteAll}>
+                <Trash className="mr-2 size-4" />
+                Delete All
+              </ContextMenuItem>
+            )}
 
-        {!isEmpty && onMoveAll && (
-          <ContextMenuItem
-            onClick={onMoveAll}
-            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
-          >
-            <ArrowIcon className="size-4" />
-            <span>{moveAllText}</span>
-          </ContextMenuItem>
-        )}
-
-        {!isEmpty && onShuffle && (
-          <ContextMenuItem
-            onClick={onShuffle}
-            className="flex cursor-pointer items-center gap-2 transition-all focus:bg-foreground/10 focus:text-foreground"
-          >
-            <Shuffle className="size-4" />
-            <span>Shuffle</span>
-          </ContextMenuItem>
-        )}
-
-        {!isEmpty && onDeleteAll && (
-          <ContextMenuItem
-            onClick={onDeleteAll}
-            className="flex cursor-pointer items-center gap-2 
-              text-red-700 focus:bg-foreground/10 
-              focus:text-red-700 dark:text-red-400
-              dark:focus:text-red-400"
-          >
-            <Trash className="size-4" />
-            <span>Clear All</span>
-          </ContextMenuItem>
+            {isSidebar && (
+              <>
+                <ContextMenuSeparator />
+                <ContextMenuItem onClick={onShuffle}>
+                  <Shuffle className="mr-2 size-4" />
+                  Shuffle
+                </ContextMenuItem>
+              </>
+            )}
+          </>
         )}
       </ContextMenuContent>
     </ContextMenu>

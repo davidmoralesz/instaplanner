@@ -12,6 +12,12 @@ export const metadata: Metadata = {
   },
 }
 
+/**
+ * Root layout component for the application.
+ * Provides global metadata, error handling, and UI components.
+ * @param children - React nodes to be rendered inside the layout.
+ * @returns The root layout structure.
+ */
 export default function RootLayout({
   children,
 }: {

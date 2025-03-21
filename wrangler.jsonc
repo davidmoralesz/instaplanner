@@ -9,8 +9,12 @@
   },
   "kv_namespaces": [
     {
-      "binding": "maintenance_mode",
-      "id": "b45ec1d38ea64690890ebebd07e36671"
+      "binding": "BUILD_CONFIG",
+      "id": "7904a508fce34ed7addecbd702a7bba1"
+    },
+    {
+      "binding": "DOCS_STORE",
+      "id": "902ea3eaaf61462f8fe42f7afcf3298b"
     }
   ]
 }

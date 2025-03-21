@@ -1,0 +1,20 @@
+name: Invalidate Docs Cache
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "public/docs/*.md"
+
+jobs:
+  invalidate_cache:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call Cache Invalidation API
+        run: |
+          curl -X POST "https://yourdomain.com/api/docs?doc=policy"
+          curl -X POST "https://yourdomain.com/api/docs?doc=terms"
+        env:
+          API_SECRET: ${{ secrets.KV_INVALIDATION_SECRET }}

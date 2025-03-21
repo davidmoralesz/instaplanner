@@ -1,7 +1,14 @@
-import { AppError, ErrorCodes } from "@/lib/errors"
-import type { ImageItem } from "@/types"
+/**
+ * Storage system for persisting images using IndexedDB
+ */
 import { openDB, type DBSchema, type IDBPDatabase } from "idb"
+import { AppError, ErrorCodes } from "@/lib/errors"
+import { DB } from "@/config/constants"
+import type { ImageItem, ContainerType } from "@/types"
 
+/**
+ * Database schema for the gallery
+ */
 interface GalleryDB extends DBSchema {
   images: {
     key: string
@@ -10,7 +17,7 @@ interface GalleryDB extends DBSchema {
       data: string
       position: number
       timestamp: number
-      container: "grid" | "sidebar"
+      container: ContainerType
     }
     indexes: {
       "by-position": number
@@ -18,20 +25,17 @@ interface GalleryDB extends DBSchema {
   }
 }
 
-const DB_NAME = "gallery-db"
-const STORE_NAME = "images"
-const DB_VERSION = 1
-
 /**
- * Initializes the IndexedDB database
- * @returns A promise that resolves to the database instance
+ * Initializes and upgrades the IndexedDB database for storing gallery images.
+ * @returns A promise resolving to the initialized database instance
+ * @throws {AppError} If the database initialization fails
  */
-export async function initDB() {
+export async function initDB(): Promise<IDBPDatabase<GalleryDB>> {
   try {
-    return await openDB<GalleryDB>(DB_NAME, DB_VERSION, {
+    return await openDB<GalleryDB>(DB.NAME, DB.VERSION, {
       upgrade(db: IDBPDatabase<GalleryDB>, oldVersion) {
         if (oldVersion < 1) {
-          const store = db.createObjectStore(STORE_NAME, { keyPath: "id" })
+          const store = db.createObjectStore(DB.STORE_NAME, { keyPath: "id" })
           store.createIndex("by-position", "position")
         }
       },
@@ -46,34 +50,41 @@ export async function initDB() {
 }
 
 /**
- * Saves images to the database
- * @param images The images to save
- * @param container The container to save the images to (grid or sidebar)
+ * Saves an array of images to the specified container in IndexedDB.
+ * @param images - Array of image objects to be saved
+ * @param container - The container type where the images should be stored
+ * @param positions - Optional array of positions for each image
+ * @throws {AppError} If the image saving process fails
  */
 export async function saveImages(
   images: ImageItem[],
-  container: "grid" | "sidebar"
-) {
+  container: ContainerType,
+  positions?: number[]
+): Promise<void> {
   try {
     const db = await initDB()
-    const tx = db.transaction(STORE_NAME, "readwrite")
-    const store = tx.objectStore(STORE_NAME)
+    const tx = db.transaction(DB.STORE_NAME, "readwrite")
+    const store = tx.objectStore(DB.STORE_NAME)
 
-    // Get the current max position for the container
-    const allImages = await store.getAll()
-    const containerImages = allImages.filter(
-      (img) => img.container === container
-    )
-    const maxPosition = containerImages.reduce(
-      (max, img) => Math.max(max, img.position || 0),
-      -1
-    )
+    // Get the current max position for the container if positions aren't provided
+    let maxPosition = -1
+    if (!positions) {
+      const allImages = await store.getAll()
+      const containerImages = allImages.filter(
+        (img) => img.container === container
+      )
+      maxPosition = containerImages.reduce(
+        (max, img) => Math.max(max, img.position || 0),
+        -1
+      )
+    }
 
+    // Save each image with its position
     await Promise.all(
       images.map((image, index) =>
         store.put({
           ...image,
-          position: maxPosition + 1 + index, // Preserve order
+          position: positions ? positions[index] : maxPosition + 1 + index, // Use provided position or append
           timestamp: Date.now(),
           container,
         })
@@ -88,17 +99,47 @@ export async function saveImages(
 }
 
 /**
- * Loads all images from the database
- * @returns A promise that resolves to an object containing grid and sidebar images
+ * Gets the positions of images in the database.
+ * @param imageIds - Array of image IDs to get positions for
+ * @returns A promise resolving to an array of positions
+ * @throws {AppError} If getting positions fails
  */
-export async function loadImages() {
+export async function getPositions(imageIds: string[]): Promise<number[]> {
   try {
     const db = await initDB()
-    const images = await db.getAll(STORE_NAME)
+    const positions = await Promise.all(
+      imageIds.map(async (id) => {
+        const image = await db.get(DB.STORE_NAME, id)
+        return image ? image.position : -1
+      })
+    )
+    return positions
+  } catch (error) {
+    console.error("Failed to get image positions:", error)
+    throw new AppError(
+      "Failed to get image positions",
+      ErrorCodes.IMAGE_LOAD_FAILED
+    )
+  }
+}
+
+/**
+ * Loads images from the IndexedDB database and organizes them by container.
+ * @returns A promise resolving to an object containing arrays of grid and sidebar images.
+ * @throws {AppError} If loading images fails
+ */
+export async function loadImages(): Promise<{
+  gridImages: ImageItem[]
+  sidebarImages: ImageItem[]
+}> {
+  try {
+    const db = await initDB()
+    const images = await db.getAll(DB.STORE_NAME)
 
     // Sort by position before grouping
     const sortedImages = images.sort((a, b) => a.position - b.position)
 
+    // Group images by container
     return sortedImages.reduce(
       (acc, img) => {
         if (img.container === "grid") {
@@ -117,18 +158,20 @@ export async function loadImages() {
 }
 
 /**
- * Updates the positions of images in the database
- * @param images The images to update
- * @param container The container the images are in (grid or sidebar)
+ * Updates the positions of images in the IndexedDB database.
+ * @param images - Array of images with updated positions
+ * @param container - The container type
+ * @returns A promise that resolves when positions are updated.
+ * @throws {AppError} If updating positions fails
  */
 export async function updatePositions(
   images: ImageItem[],
-  _container: "grid" | "sidebar"
-) {
+  container: ContainerType
+): Promise<void> {
   try {
     const db = await initDB()
-    const tx = db.transaction(STORE_NAME, "readwrite")
-    const store = tx.objectStore(STORE_NAME)
+    const tx = db.transaction(DB.STORE_NAME, "readwrite")
+    const store = tx.objectStore(DB.STORE_NAME)
 
     await Promise.all(
       images.map(async (image, index) => {
@@ -137,6 +180,7 @@ export async function updatePositions(
           await store.put({
             ...existing,
             position: index,
+            container, // Ensure container is updated
           })
         }
       })
@@ -153,13 +197,15 @@ export async function updatePositions(
 }
 
 /**
- * Deletes an image from the database
- * @param id The ID of the image to delete
+ * Deletes an image from the IndexedDB database.
+ * @param id - The unique identifier of the image to delete
+ * @returns A promise that resolves when the image is deleted.
+ * @throws {AppError} If deleting the image fails
  */
-export async function deleteImage(id: string) {
+export async function deleteImage(id: string): Promise<void> {
   try {
     const db = await initDB()
-    await db.delete(STORE_NAME, id)
+    await db.delete(DB.STORE_NAME, id)
   } catch (error) {
     console.error("Failed to delete image:", error)
     throw new AppError("Failed to delete image", ErrorCodes.IMAGE_DELETE_FAILED)
@@ -167,13 +213,15 @@ export async function deleteImage(id: string) {
 }
 
 /**
- * Clears all images from the database
+ * Clears all images from the IndexedDB database.
+ * @returns A promise that resolves when all images are cleared.
+ * @throws {AppError} If clearing all images fails
  */
-export async function clearAllImages() {
+export async function clearAllImages(): Promise<void> {
   try {
     const db = await initDB()
-    const tx = db.transaction(STORE_NAME, "readwrite")
-    await tx.objectStore(STORE_NAME).clear()
+    const tx = db.transaction(DB.STORE_NAME, "readwrite")
+    await tx.objectStore(DB.STORE_NAME).clear()
     await tx.done
   } catch (error) {
     console.error("Failed to clear all images:", error)
