@@ -11,6 +11,12 @@ interface ImageUploaderProps {
   onUpload: (images: ImageItem[]) => void
 }
 
+/**
+ * ImageUploader component that handles the uploading and processing of image files.
+ * @param onUpload - A callback function to be invoked with processed image data after successful upload
+ * @param ref - A forwarded ref to the file input element to trigger file selection programmatically
+ * @returns An input element and button for uploading image files.
+ */
 export const ImageUploader = forwardRef<HTMLInputElement, ImageUploaderProps>(
   function ImageUploader({ onUpload }, ref) {
     const { toast } = useToast()
