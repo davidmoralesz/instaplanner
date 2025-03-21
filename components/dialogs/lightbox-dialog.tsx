@@ -1,12 +1,11 @@
 "use client"
 
-import type React from "react"
-
 import { Button } from "@/components/ui/button"
 import type { ImageItem } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from "lucide-react"
-import { useCallback, useEffect, useState } from "react"
+import { useLightboxHandlers } from "@/hooks/use-lightbox-handlers"
+import { ANIMATION_DURATION_SEC } from "@/config/constants"
 
 interface LightboxProps {
   images: ImageItem[]
@@ -15,102 +14,32 @@ interface LightboxProps {
   onClose: () => void
 }
 
-export function Lightbox({
+/**
+ * Component for rendering a lightbox dialog to display images with zoom, drag, and navigation controls.
+ * @param images - List of images to display in the lightbox
+ * @param initialIndex - The index of the image to show initially (defaults to 0)
+ * @param open - Determines if the dialog is open
+ * @param onClose - A callback function to close the lightbox
+ * @returns A lightbox dialog component with image navigation, zoom, and drag functionality.
+ */
+export function LightboxDialog({
   images,
   initialIndex = 0,
   open,
   onClose,
 }: LightboxProps) {
-  const [currentIndex, setCurrentIndex] = useState(initialIndex)
-  const [scale, setScale] = useState(1)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-
-  useEffect(() => {
-    setScale(1)
-    setPosition({ x: 0, y: 0 })
-  }, [currentIndex])
-
-  useEffect(() => {
-    if (open) setCurrentIndex(initialIndex)
-  }, [open, initialIndex])
-
-  const handlePrevious = useCallback(() => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))
-  }, [images.length])
-
-  const handleNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))
-  }, [images.length])
-
-  const handleZoom = useCallback((delta: number) => {
-    setScale((prev) => Math.min(Math.max(0.5, prev + delta), 3))
-    setPosition({ x: 0, y: 0 })
-  }, [])
-
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (!open) return
-
-      switch (e.key) {
-        case "ArrowLeft":
-          handlePrevious()
-          break
-        case "ArrowRight":
-          handleNext()
-          break
-        case "Escape":
-          onClose()
-          break
-      }
-    },
-    [open, handlePrevious, handleNext, onClose]
-  )
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [handleKeyDown])
-
-  const handleDragStart = useCallback(
-    (e: React.MouseEvent | React.TouchEvent) => {
-      if (scale === 1) return
-
-      setIsDragging(true)
-      const point = "touches" in e ? e.touches[0] : e
-      setDragStart({
-        x: point.clientX - position.x,
-        y: point.clientY - position.y,
-      })
-    },
-    [scale, position]
-  )
-
-  const handleDragMove = useCallback(
-    (e: React.MouseEvent | React.TouchEvent) => {
-      if (!isDragging) return
-
-      const point = "touches" in e ? e.touches[0] : e
-      const maxOffset = 100 * (scale - 1)
-
-      setPosition({
-        x: Math.min(
-          Math.max(point.clientX - dragStart.x, -maxOffset),
-          maxOffset
-        ),
-        y: Math.min(
-          Math.max(point.clientY - dragStart.y, -maxOffset),
-          maxOffset
-        ),
-      })
-    },
-    [isDragging, dragStart, scale]
-  )
-
-  const handleDragEnd = useCallback(() => {
-    setIsDragging(false)
-  }, [])
+  const {
+    currentIndex,
+    scale,
+    position,
+    isDragging,
+    handlePrevious,
+    handleNext,
+    handleZoom,
+    handleDragStart,
+    handleDragMove,
+    handleDragEnd,
+  } = useLightboxHandlers(images, initialIndex, open, onClose)
 
   if (!open) return null
 
@@ -174,7 +103,7 @@ export function Lightbox({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ type: "tween", duration: 0.3 }}
+            transition={{ type: "tween", duration: ANIMATION_DURATION_SEC }}
             className="relative"
             onMouseDown={handleDragStart}
             onMouseMove={handleDragMove}
