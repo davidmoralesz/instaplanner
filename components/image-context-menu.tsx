@@ -28,6 +28,20 @@ interface ImageContextMenuProps {
   isEmpty?: boolean
 }
 
+/**
+ * ImageContextMenu component that provides options for managing images (delete, move, shuffle, upload).
+ * @param children - The content inside the context menu trigger that will be displayed to the user
+ * @param onDelete - Callback to handle the delete action for a single image
+ * @param onMove - Callback to handle moving a single image to a different location (grid or sidebar)
+ * @param onMoveAll - Callback to handle moving all images to a different location (grid or sidebar)
+ * @param onDeleteAll - Callback to handle deleting all images at once
+ * @param onShuffle - Callback to shuffle the images in the current container
+ * @param onUpload - Callback to upload new images if the container is empty
+ * @param moveDirection - Determine the direction of movement (either "toGrid" or "toSidebar")
+ * @param isEmpty - Determine if the container is empty (defaults to false)
+ * @returns A context menu with options for managing images.
+ */
+
 export function ImageContextMenu({
   children,
   onDelete,
