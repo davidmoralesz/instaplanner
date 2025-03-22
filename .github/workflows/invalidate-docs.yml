@@ -12,9 +12,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract changed doc files
+        id: changed_docs
+        run: |
+          DOCS=$(git diff --name-only HEAD^ HEAD \
+            | grep '^public/docs/' \
+            | sed 's|public/docs/||' \
+            | sed 's|\.md||' \
+            | tr '[:upper:]' '[:lower:]' \
+            | tr '\n' ' ')
+          echo "CHANGED_DOCS=$DOCS" >> $GITHUB_ENV
+
       - name: Call Cache Invalidation API
         run: |
-          curl -X POST "https://yourdomain.com/api/docs?doc=policy"
-          curl -X POST "https://yourdomain.com/api/docs?doc=terms"
+          for doc in $CHANGED_DOCS; do
+            curl -X POST "https://instaplanner.pages.dev/api/docs/$doc"
+          done
         env:
           API_SECRET: ${{ secrets.KV_INVALIDATION_SECRET }}
