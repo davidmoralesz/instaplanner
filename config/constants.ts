@@ -3,7 +3,7 @@
  */
 
 /** Maximum number of images allowed in the application */
-export const MAX_IMAGES = 100
+export const MAX_IMAGES = 300
 
 /**
  * Maximum file size for uploaded images (in bytes)
@@ -13,7 +13,7 @@ export const MAX_IMAGES = 100
 export const MAX_FILE_SIZE = 3 * 1024 * 1024 // 3 MB
 
 /** Maximum number of files to process at once */
-export const MAX_FILES_TO_PROCESS = 20
+export const MAX_FILES_TO_PROCESS = 100
 
 /** Maximum dimension for compressed images */
 export const MAX_IMAGE_DIMENSION = 1200
