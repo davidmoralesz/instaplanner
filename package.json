@@ -46,7 +46,7 @@
     "framer-motion": "latest",
     "idb": "latest",
     "lucide-react": "^0.454.0",
-    "next": "15.1.6",
+    "next": "15.1.11",
     "next-themes": "^0.4.6",
     "prettier": "^3.5.2",
     "prettier-plugin-organize-imports": "^4.1.0",

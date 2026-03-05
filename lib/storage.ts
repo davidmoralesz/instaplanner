@@ -1,10 +1,10 @@
 /**
  * Storage system for persisting images using IndexedDB
  */
-import { openDB, type DBSchema, type IDBPDatabase } from "idb"
-import { AppError, ErrorCodes } from "@/lib/errors"
 import { DB } from "@/config/constants"
-import type { ImageItem, ContainerType } from "@/types"
+import { AppError, ErrorCodes } from "@/lib/errors"
+import type { ContainerType, ImageItem } from "@/types"
+import { openDB, type DBSchema, type IDBPDatabase } from "idb"
 
 /**
  * Database schema for the gallery

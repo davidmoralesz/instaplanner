@@ -1,6 +1,9 @@
 "use client"
 
-import { type ReactNode, useState, useEffect } from "react"
+import { DragOverlay } from "@/components/dnd/drag-overlay"
+import { DRAG_DISTANCE_CONSTRAINT } from "@/config/constants"
+import { useDragAndDrop } from "@/hooks/use-drag-and-drop"
+import type { ContainerType, ImageItem } from "@/types"
 import {
   DndContext,
   PointerSensor,
@@ -9,12 +12,9 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core"
-import { SortableContext } from "@dnd-kit/sortable"
 import { snapCenterToCursor } from "@dnd-kit/modifiers"
-import { DragOverlay } from "@/components/dnd/drag-overlay"
-import { useDragAndDrop } from "@/hooks/use-drag-and-drop"
-import type { ImageItem, ContainerType } from "@/types"
-import { DRAG_DISTANCE_CONSTRAINT } from "@/config/constants"
+import { SortableContext } from "@dnd-kit/sortable"
+import { useEffect, useState, type ReactNode } from "react"
 
 interface DndProviderProps {
   gridImages: ImageItem[]

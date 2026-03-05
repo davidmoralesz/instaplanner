@@ -1,5 +1,5 @@
 import { getFormattedTime } from "@/lib/utils"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 
 /**
  * Clock component that displays the current time and updates every minute.

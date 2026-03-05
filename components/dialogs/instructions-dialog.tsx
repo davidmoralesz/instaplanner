@@ -2,6 +2,13 @@
 
 import { Button } from "@/components/ui/button"
 import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -9,6 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { INSTRUCTIONS_STORAGE_KEY } from "@/config/constants"
 import {
   ArrowLeft,
   ArrowRight,
@@ -20,14 +28,6 @@ import {
   Upload,
 } from "lucide-react"
 import { useEffect, useState } from "react"
-import { INSTRUCTIONS_STORAGE_KEY } from "@/config/constants"
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
 
 interface InstructionsDialogProps {
   className?: string

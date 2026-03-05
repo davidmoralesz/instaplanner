@@ -1,11 +1,11 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { ANIMATION_DURATION_SEC } from "@/config/constants"
+import { useLightboxHandlers } from "@/hooks/use-lightbox-handlers"
 import type { ImageItem } from "@/types"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from "lucide-react"
-import { useLightboxHandlers } from "@/hooks/use-lightbox-handlers"
-import { ANIMATION_DURATION_SEC } from "@/config/constants"
 
 interface LightboxProps {
   images: ImageItem[]

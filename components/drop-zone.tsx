@@ -1,14 +1,14 @@
 "use client"
 
 import { useToast } from "@/components/ui/use-toast"
+import { MAX_FILES_TO_PROCESS, MAX_FILE_SIZE } from "@/config/constants"
+import { fadeAnimation } from "@/lib/dnd/animation"
 import { AppError, ErrorCodes } from "@/lib/errors"
 import type { ImageItem } from "@/types"
 import { motion } from "framer-motion"
 import { ImageUp } from "lucide-react"
 import type React from "react"
 import { useCallback, useRef, useState } from "react"
-import { MAX_FILE_SIZE, MAX_FILES_TO_PROCESS } from "@/config/constants"
-import { fadeAnimation } from "@/lib/dnd/animation"
 
 interface DropZoneProps {
   children: React.ReactNode

@@ -3,8 +3,8 @@
 import { useToast } from "@/components/ui/use-toast"
 import { useHistory } from "@/hooks/use-history"
 import { useImageManagement } from "@/hooks/use-image-management"
-import { useCallback, useRef, useState } from "react"
 import { ContainerType } from "@/types"
+import { useCallback, useRef, useState } from "react"
 
 /**
  * Custom hook for managing page-level interactions and image operations

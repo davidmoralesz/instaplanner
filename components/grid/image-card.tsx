@@ -6,11 +6,11 @@ import type React from "react"
 import { GhostPlaceholder } from "@/components/ghost-placeholder"
 import { ImageContextMenu } from "@/components/image-context-menu"
 import { Button } from "@/components/ui/button"
+import { tweenTransition } from "@/lib/dnd/animation"
 import { useSortable } from "@dnd-kit/sortable"
 import { motion } from "framer-motion"
 import { ArrowLeft, ArrowRight, Trash } from "lucide-react"
 import Image from "next/image"
-import { tweenTransition } from "@/lib/dnd/animation"
 
 interface ImageCardProps {
   container: ContainerType

@@ -1,17 +1,17 @@
 "use client"
 
+import { Clock } from "@/components/clock"
 import { Avatar } from "@/components/ui/avatar"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
-  DialogClose,
 } from "@/components/ui/dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
-import { Clock } from "@/components/clock"
 import { getRandomInRange } from "@/lib/utils"
 import type { ImageItem } from "@/types"
 import { Bookmark, ChevronLeft, Film, Grid, Link } from "lucide-react"

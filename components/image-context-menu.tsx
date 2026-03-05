@@ -6,11 +6,11 @@ import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
-  ContextMenuTrigger,
   ContextMenuSeparator,
+  ContextMenuTrigger,
 } from "@/components/ui/context-menu"
-import { ArrowLeft, ArrowRight, Shuffle, Trash, Upload } from "lucide-react"
 import type { ContainerType } from "@/types"
+import { ArrowLeft, ArrowRight, Shuffle, Trash, Upload } from "lucide-react"
 
 interface ImageContextMenuProps {
   children: React.ReactNode

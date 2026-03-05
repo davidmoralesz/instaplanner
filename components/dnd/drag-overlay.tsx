@@ -1,10 +1,10 @@
 "use client"
 
+import { dragOverlayAnimation, dropAnimation } from "@/lib/dnd/animation"
+import type { ImageItem } from "@/types"
+import { DragOverlay as DndKitDragOverlay } from "@dnd-kit/core"
 import { motion } from "framer-motion"
 import Image from "next/image"
-import { DragOverlay as DndKitDragOverlay } from "@dnd-kit/core"
-import type { ImageItem } from "@/types"
-import { dragOverlayAnimation, dropAnimation } from "@/lib/dnd/animation"
 
 interface DragOverlayProps {
   activeImage: ImageItem | null

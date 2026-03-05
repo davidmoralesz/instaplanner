@@ -1,6 +1,7 @@
 "use client"
 
 import { useToast } from "@/components/ui/use-toast"
+import { MAX_IMAGES } from "@/config/constants"
 import { AppError } from "@/lib/errors"
 import { compressImage } from "@/lib/image-utils"
 import {
@@ -14,7 +15,6 @@ import { swapArrayElements } from "@/lib/utils"
 import type { ContainerType, ImageItem } from "@/types"
 import { arrayMove } from "@dnd-kit/sortable"
 import { useCallback, useEffect, useState } from "react"
-import { MAX_IMAGES } from "@/config/constants"
 
 /**
  * Custom hook for managing image operations such as loading, adding, deleting, moving, shuffling, and clearing images.

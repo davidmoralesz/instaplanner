@@ -2,9 +2,9 @@
 
 import { Breadcrumb } from "@/components/breadcrumb"
 import { Footer } from "@/components/footer"
+import { useMarkdownContent } from "@/hooks/use-markdown-content"
 import { cn } from "@/lib/utils"
 import ReactMarkdown from "react-markdown"
-import { useMarkdownContent } from "@/hooks/use-markdown-content"
 
 interface DocumentationProps {
   title: string

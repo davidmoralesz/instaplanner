@@ -3,8 +3,8 @@
 /**
  * Component for rendering a ghost placeholder during drag operations
  */
-import { motion } from "framer-motion"
 import { tweenTransition } from "@/lib/dnd/animation"
+import { motion } from "framer-motion"
 
 interface GhostPlaceholderProps {
   /** Whether the placeholder is visible */
