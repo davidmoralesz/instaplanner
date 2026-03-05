@@ -1,9 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
-import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core"
-import type { ImageItem, ContainerType } from "@/types"
 import { ANIMATION_DURATION_MS } from "@/config/constants"
+import type { ContainerType, ImageItem } from "@/types"
+import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core"
+import { useCallback, useEffect, useState } from "react"
 
 interface DragAndDropProps {
   gridImages: ImageItem[]

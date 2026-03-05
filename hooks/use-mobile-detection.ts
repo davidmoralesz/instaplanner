@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
 import { MOBILE_BREAKPOINT } from "@/config/constants"
+import { useEffect, useState } from "react"
 
 /**
  * Custom hook for detecting mobile devices based on user agent and screen width.

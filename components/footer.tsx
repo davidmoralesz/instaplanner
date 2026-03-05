@@ -1,9 +1,9 @@
 "use client"
 
-import Link from "next/link"
-import { Heart } from "lucide-react"
-import { usePathname } from "next/navigation"
 import { NavLink } from "@/types"
+import { Heart } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 /**
  * Footer component that displays the footer section with links and copyright information.

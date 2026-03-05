@@ -5,8 +5,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useMobileDetection } from "@/hooks/use-mobile-detection"
 import { useMaintenanceMode } from "@/hooks/use-maintenance-mode"
+import { useMobileDetection } from "@/hooks/use-mobile-detection"
 import { AlertTriangle } from "lucide-react"
 
 /**

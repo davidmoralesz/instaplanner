@@ -1,7 +1,6 @@
 "use client"
 
 import type { ContainerType, ImageItem } from "@/types"
-import type React from "react"
 
 import { ImageContextMenu } from "@/components/image-context-menu"
 import { Button } from "@/components/ui/button"

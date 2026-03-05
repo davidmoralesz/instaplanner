@@ -1,15 +1,14 @@
 "use client"
 
 import type { ContainerType, ImageItem } from "@/types"
-import type React from "react"
 
 import { LightboxDialog } from "@/components/dialogs/lightbox-dialog"
-import { ImageContextMenu } from "@/components/image-context-menu"
+import { ImageCard } from "@/components/grid/image-card"
 import { SkeletonGrid } from "@/components/grid/skeleton-grid"
+import { ImageContextMenu } from "@/components/image-context-menu"
 import { useDroppable } from "@dnd-kit/core"
 import { ImageUp } from "lucide-react"
 import { useState } from "react"
-import { ImageCard } from "@/components/grid/image-card"
 
 interface ImageGridProps {
   images: ImageItem[]

@@ -1,7 +1,7 @@
 /**
  * Types for the drag and drop system
  */
-import type { ImageItem, ContainerType } from "@/types"
+import type { ContainerType, ImageItem } from "@/types"
 import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core"
 
 /**

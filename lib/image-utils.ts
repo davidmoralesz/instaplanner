@@ -1,11 +1,11 @@
 /**
  * Utilities for image processing
  */
-import { AppError, ErrorCodes } from "@/lib/errors"
 import {
-  MAX_IMAGE_DIMENSION,
   IMAGE_COMPRESSION_QUALITY,
+  MAX_IMAGE_DIMENSION,
 } from "@/config/constants"
+import { AppError, ErrorCodes } from "@/lib/errors"
 
 /**
  * Compresses an image to reduce file size.

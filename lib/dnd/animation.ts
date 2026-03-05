@@ -2,8 +2,8 @@
  * Animation utilities for the drag and drop system
  */
 import { ANIMATION_DURATION_MS } from "@/config/constants"
-import { defaultDropAnimationSideEffects } from "@dnd-kit/core"
 import type { DragOverlayConfig } from "@/lib/dnd/types"
+import { defaultDropAnimationSideEffects } from "@dnd-kit/core"
 
 /**
  * Base transition configuration for animations

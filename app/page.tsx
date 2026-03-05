@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import dynamic from "next/dynamic"
+import { SortableContext } from "@dnd-kit/sortable"
 import { AnimatePresence } from "framer-motion"
 import {
   ArrowLeft,
@@ -11,25 +10,26 @@ import {
   Smartphone,
   Trash,
 } from "lucide-react"
-import { SortableContext } from "@dnd-kit/sortable"
+import dynamic from "next/dynamic"
+import { useEffect, useState } from "react"
 
 // Components
 import { ClearDialog } from "@/components/dialogs/clear-dialog"
-import { DropZone } from "@/components/drop-zone"
-import { GlobalContextMenu } from "@/components/global-context-menu"
-import { ImageGrid } from "@/components/grid/image-grid"
 import { InstructionsDialog } from "@/components/dialogs/instructions-dialog"
-import { SidebarSheet, SidebarContent } from "@/components/sidebar"
 import { MaintenanceDialog } from "@/components/dialogs/maintenance-dialog"
 import { PreviewDialog } from "@/components/dialogs/preview-dialog"
-import { Button } from "@/components/ui/button"
 import { DndProvider } from "@/components/dnd/dnd-provider"
-import { ImageUploader } from "@/components/image-uploader"
+import { DropZone } from "@/components/drop-zone"
 import { Footer } from "@/components/footer"
+import { GlobalContextMenu } from "@/components/global-context-menu"
+import { ImageGrid } from "@/components/grid/image-grid"
+import { ImageUploader } from "@/components/image-uploader"
+import { SidebarContent, SidebarSheet } from "@/components/sidebar"
+import { Button } from "@/components/ui/button"
 
 // Hooks
-import { usePageHandlers } from "@/hooks/use-page-handlers"
 import { useKeyboardNavigation } from "@/hooks/use-keyboard-navigation"
+import { usePageHandlers } from "@/hooks/use-page-handlers"
 
 // Load ThemeProvider dynamically to avoid SSR issues
 const ThemeProviderNoSSR = dynamic(

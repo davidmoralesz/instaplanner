@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { AppError, ErrorCodes } from "@/lib/errors"
+import { useEffect, useState } from "react"
 
 /**
  * Custom hook for managing maintenance mode state by fetching its status from an API.

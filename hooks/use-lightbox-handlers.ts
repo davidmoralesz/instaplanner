@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from "react"
 import type { ImageItem } from "@/types"
+import { useCallback, useEffect, useState } from "react"
 
 /**
  * Custom hook for handling lightbox functionality, including navigation, zoom, and drag interactions.
